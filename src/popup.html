@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Popup Timer</title>
+
+<style>
+
+/* Page style */
+body{
+font-family:Arial;
+text-align:center;
+margin-top:100px;
+}
+
+/* Popup background */
+#popup{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+/* Popup box */
+.popup-box{
+background:white;
+width:90%;
+max-width:300px;
+padding:20px;
+border-radius:10px;
+text-align:center;
+position:relative;
+}
+
+/* Close button */
+.close-btn{
+position:absolute;
+top:8px;
+right:12px;
+font-size:20px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Welcome to My Website</h1>
+<p>Home page content...</p>
+
+<!-- Popup -->
+<div id="popup">
+<div class="popup-box">
+
+<span class="close-btn" onclick="closePopup()">✖</span>
+
+<h2>Welcome</h2>
+<p>Popup closing in <span id="count">5</span> sec</p>
+
+</div>
+</div>
+
+<script>
+
+let time = 5;
+let timer;
+
+/* show popup after 5 sec */
+setTimeout(function(){
+document.getElementById("popup").style.display="flex";
+
+timer = setInterval(function(){
+
+time--;
+document.getElementById("count").innerText = time;
+
+if(time <= 0){
+closePopup();
+}
+
+},1000);
+
+},5000);
+
+
+/* manual close */
+function closePopup(){
+document.getElementById("popup").style.display="none";
+clearInterval(timer);
+}
+
+</script>
+
+</body>
+</html>

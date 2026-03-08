@@ -1,0 +1,113 @@
+    :root{
+    --black:black;
+    --sub-black:rgb(16, 16, 19);
+
+    --card:rgba(29, 28, 28, 1);
+    --main-theme:rgba(246, 255, 0, 1);
+
+    --text:white;
+    --sub-text:rgba(255, 255, 255, 0.501);
+
+    --text-head:55px;
+    --text-title:25px;
+    --text-sub:35px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    text-decoration: none;
+    color: inherit;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+    background-color: black;
+    font-family:'Lexend', sans-serif;
+}
+
+.main{
+    width:980px;
+    height: 100vh;
+    background:var(--black);
+    position:relative;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    position:relative;
+    height:110px;
+    border-bottom:1px solid white;
+}
+
+.menu{
+    position:absolute;
+    width:70px;
+    top:20px;
+    left:20px;
+    cursor:pointer;
+}
+
+.title{
+    position:absolute;
+    width:300px;
+    top:15px;
+    left:340px;
+}
+
+.search{
+    position:absolute;
+    width:60px;
+    top:23px;
+    right:23px;
+}
+
+/* ================= NAV OVERLAY ================= */
+
+.overlay{
+    position:absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:0;
+    background:var(--sub-black);
+    overflow:hidden;
+    transition:0.5s;
+    z-index:10;
+}
+
+.overlay.active{
+    width:460px;
+}
+
+.close{
+    position:relative;
+    width:70px;
+    top:20px;
+    left:20px;
+    cursor:pointer;
+}
+
+.navimg{
+    position:relative;
+    left:20px;
+    width:420px;
+    padding:  40px 0px;
+    border-radius:5px;
+}
+
+.navb{
+    position: relative;
+    display:block;
+    width:420px;
+    height:90px;
+    margin-left:20px;
+    margin-bottom:10px;
+}
+
+
+
+

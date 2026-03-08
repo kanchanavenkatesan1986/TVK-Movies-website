@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VIP Movies</title>
+
+<link rel="stylesheet" href="./src/main.css"/>
+<script src="./src/main.js"></script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=NATS:wght@400&display=swap" />
+</head>
+
+<body>
+
+<div class="main">
+
+    <!-- Overlay -->
+    <div id="myNav" class="overlay">
+        <img src="./m-image/Close icon.png" class="close" onclick="closeNav()">
+
+        <img src="./m-image/VIP Movies.jpg" class="navimg">
+
+        <a href="index.html">
+            <img src="./m-image/N-Home.png" class="navb">
+        </a>
+
+        <a href="">
+            <img src="./m-image/N-feedback.png" class="navb">
+        </a>
+
+        <a href="">
+            <img src="./m-image/N-about.png" class="navb">
+        </a>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()">
+        <img src="./m-image/Vip Title.png" class="title">
+        <a href="search.html">
+            <img src="./m-image/Search icon.png" class="search">
+        </a>
+    </div>
+
+    <!--INFO -->
+
+    <div class="info">
+        <div class="info-sub">
+            <img id="image" class="title-img"/>
+        </div>
+
+        <!--INFO-DATA -->
+        
+
+        <div class="info-data">
+
+            <button class="share" onclick="shareApp()">
+                <i class="fa-brands fa-whatsapp" style="font-size:45px;"></i>
+                Share</button>
+
+            <h1 class="info-title"><span id="title">With Love</span></h1>
+            <h2 class="sub-title"><span id="language">Language: Tamil</span></h2>
+            <h2 class="sub-title"><span id="release">release : 06 March 2026</span></h2>
+            <h2 class="sub-title"><span id="duration">Duration : 2h 20min</span></h2>
+            <h2 class="sub-title"><span id="director">Director: Madhan</span></h2>
+            <h2 class="sub-title"><span id="starring">Starring: Abishan Jeevinth, Anaswara Rajan, Kavya Anil</span></h2>
+            
+        </div>
+    </div>
+
+    <!-- PLAY-DOWNLOAD -->
+
+    <div class="play-down">
+            <a class="p460"><img class="play" src="./m-image/Play B (1).png"/></a>
+            <a class="p460"><img class="down" src="./m-image/Play B (2).png"/></a>
+        </div>
+
+        <!-- DISCRIPTION -->
+
+        <div class="discription">
+
+            <p id="story">Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, quo ea? A molestiae, deserunt unde nisi,
+             exercitationem eaque delectus corrupti amet molestias repellat eius necessitatibus architecto accusantium rem labore libero.</p>
+
+        </div>
+
+        <!-- [460P,720P,1080P] qUALITY PLAY-DOWNLOADS -->
+
+    <div class="main-pd">
+
+        <h1 class="pd-title">Watch & Download</h1>
+
+        <h2 class="pd-data">
+        <a class="p460"><img class="pd-play" src="./m-image/Vector.png"/>Movie Quality - 460p</a>
+        <a class="p460" target="_blank"><img class="pd-down" src="./m-image/Vector (1).png"/></a></h2>
+
+        <h2 class="pd-data">
+        <a class="p720"><img class="pd-play" src="./m-image/Vector.png"/>Movie Quality - 720p</a>
+        <a class="p720" target="_blank"><img class="pd-down" src="./m-image/Vector (1).png"/></a></h2>
+
+        <h2 class="pd-data">
+        <a class="p1080"><img class="pd-play" src="./m-image/Vector.png"/>Movie Quality - 1080p</a>
+        <a class="p1080" target="_blank"><img class="pd-down" src="./m-image/Vector (1).png"/></a></h2>
+
+    </div>    
+
+
+
+</div>
+
+<style>
+
+    /* ================= INFO ================= */
+    
+    .info{
+        width: 980px;
+        display: flex;
+    }
+    .info-sub{
+        width: 360px;
+        padding: 20px;
+    }
+    .title-img{
+        width:300px;
+        height: 465px;
+        margin: 20px;
+        border: 4px solid white;
+        border-radius: 10px;
+    }
+
+    /* == INFO-DATA == */
+
+    .info-data{
+        padding: 20px;
+        position: relative;
+    }
+    .share{
+        position: relative;
+        margin: 0px 0px 50px 380px;
+        align-items:center;
+        justify-content:center;
+        padding: 15px 25px;
+        background-color:#25D366;
+        border:none;
+        color:#ffffff;
+        display:flex;
+        font-size:35px;
+        font-weight:550;
+        border-radius:30px;
+        gap:10px;
+    }
+
+    .info-title{
+        font-size: var(--text-head);
+        padding: 10px;
+        color: var(--text);
+    }
+    .sub-title{
+        font-size: var(--text-title);
+        padding: 10px;
+        color: var(--sub-text);
+    }
+
+    /* ================= PLAY-DOWNLOAD ================= */
+
+    .play-down{
+        width: 980px;
+        padding: 20px;
+        background-color: #000000;
+        display: flex;
+        justify-content: space-between;
+    }
+    .play{
+        width: 450px;
+    }
+    .down{
+        width: 450px;
+    }
+
+    /* ================= DISCRIPTION ================= */
+
+    .discription{
+        width: 980px;
+        color: var(--text);
+        font-size: var(--text-sub);
+        padding: 0px 30px;
+        text-align: center;
+    }
+
+    /* ================= [460P,720P,1080P] qUALITY PLAY-DOWNLOADS ================= */
+
+    .main-pd{
+        width: 940px;
+        padding: 20px;
+        margin: 20px;
+        background-color: var(--card);
+        border-radius: 10px;
+    }
+
+    .pd-title{
+        font-size: var(--text-sub);
+        color: var(--text);
+        padding: 10px;
+        text-align: center;
+    }
+    .pd-play{
+        width: 35px;
+        position: absolute;
+        left: 20px;
+    }
+    .pd-down{
+        width: 45px;
+        position: absolute;
+        right: 20px;
+    }
+    .pd-data{
+        position: relative;
+        margin: 20px 0px;
+        padding: 20px;
+        padding-left: 70px;
+        border-radius: 10px;
+        border: 5px solid var(--main-theme);
+        background-color: var(--black);
+        color:var(--text);
+        font-size: var(--text-sub);
+        text-align: left;
+    }
+</style>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const movieId = params.get("reward") || params.get("id");
+
+fetch("./movies.json")
+.then(res => res.json())
+.then(data => {
+
+const movie = data.find(m => m.id == Number(movieId));
+
+if(!movie){
+document.body.innerHTML = "Movie not found";
+return;
+}
+
+document.getElementById("title").innerText = movie.title;
+document.getElementById("image").src = movie.image;
+document.getElementById("language").innerText = "Language: " + movie.language;
+document.getElementById("release").innerText = "Release : " + movie.release;
+document.getElementById("duration").innerText = "Duration : " + movie.duration;
+document.getElementById("director").innerText = "Director: " + movie.director;
+document.getElementById("starring").innerText = "Starring: " + movie.starring;
+document.getElementById("story").innerText = movie.story;
+
+document.querySelectorAll(".p460").forEach(a=>{
+a.href = movie["460p"];
+});
+
+document.querySelectorAll(".p720").forEach(a=>{
+a.href = movie["720p"];
+});
+
+document.querySelectorAll(".p1080").forEach(a=>{
+a.href = movie["1080p"];
+});
+
+});
+
+</script>
+
+</body>
+</html>

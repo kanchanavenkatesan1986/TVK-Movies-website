@@ -1,0 +1,69 @@
+[
+{
+"id":"1",
+"title":"Game Changer",
+"image":"./img/Game Changer.jpg",
+"release":"15 Jan 2025",
+"language":"Tamil",
+"year":"2025",
+"category":"Tamil",
+"duration":"125 min",
+"director":"Shankar",
+"starring":"Ram Charan",
+"story":"A Tamil action thriller about a game-changing hero.",
+"460p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies",
+"720p":"#",
+"1080p":"#"
+},
+
+{
+"id":"2",
+"title":"Mufasa The Lion King",
+"image":"./img/Mufasa_The_Lion_King.jpg",
+"release":"20 Dec 2024",
+"language":"Tamil",
+"year":"2024",
+"category":"Hollywood",
+"duration":"120 min",
+"director":"Barry Jenkins",
+"starring":"Aaron Pierre, Kelvin Harrison Jr.",
+"story":"Mufasa, a cub lost and alone meets a lion named Taka.",
+"460p":"#",
+"720p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies",
+"1080p":"#"
+},
+
+{
+"id":"3",
+"title":"Leo",
+"image":"",
+"release":"19 Oct 2023",
+"language":"Tamil",
+"year":"2023",
+"category":"Tamil",
+"duration":"164 min",
+"director":"Lokesh Kanagaraj",
+"starring":"Vijay, Trisha, Sanjay Dutt",
+"story":"A cafe owner becomes the target of dangerous criminals.",
+"460p":"#",
+"720p":"#",
+"1080p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies"
+},
+
+{
+"id":"4",
+"title":"Jailer",
+"image":"https://moviesda17.com/uploads/posters/with-love-2026.webp",
+"release":"10 Aug 2023",
+"language":"Tamil",
+"year":"2025",
+"category":"Tamil",
+"duration":"158 min",
+"director":"Nelson",
+"starring":"Rajinikanth, Mohanlal",
+"story":"Jailer is a 2023 Indian Tamil-language action comedy film written and directed by Nelson Dilipkumar. Produced by Kalanithi Maran under Sun Pictures, the film stars Rajinikanth as a retired jailer who sets out to apprehend an eccentric idol smuggler threatening his family. ",
+"460p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies",
+"720p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies",
+"1080p":"https://play.google.com/store/apps/details?id=com.vipmovies.tvkmovies"
+}
+]
