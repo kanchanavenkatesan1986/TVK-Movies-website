@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ID Card</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="card"></div>
+
+
+
+</body>
+
+<script>
+    fetch("student.json")
+.then(response => response.json())
+.then(data => {
+
+const container = document.getElementById("card");
+
+data.students.forEach(student => {
+
+const card = `
+
+<div class="id-card">
+
+    <div class="logo">
+        <h3 class="course" id="coures">${student.course}</h3>
+        <img id="img" src="${student.img}">
+        <h5>Name : <span id="name">${student.name}</span></h5>
+        <h5>Student ID : <span id="studentid">${student.studentid}</span></h5>
+        <h5>Phone : <span id="phone">${student.phone}</span></h5>
+        <h5>Batch : <span id="batch">${student.batch}</span></h5>
+
+        <div class="bottom">
+    <p class="desc">Authorized Student of LOGIN360 IT Institute</p>
+    <p>Email : student@login360.in</p>
+    <p>www.login360.in</p>
+</div>
+
+    </div>
+    
+
+</div>
+`;
+
+container.innerHTML += card;
+
+});
+
+});
+</script>
+
+<style>
+
+    #card{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+padding:20px;
+
+}
+
+    .bottom{
+        position: absolute;
+bottom:0;
+width:100%;
+background: linear-gradient(45deg,#1c4fa3,#ff7a00);
+color:white;
+text-align:center;
+padding:10px 5px;
+font-size:12px;
+letter-spacing:0.5px;
+border-bottom-left-radius:20px;
+border-bottom-right-radius:20px;
+
+}
+
+
+.desc{
+font-size:11px;
+margin-bottom:4px;
+opacity:0.9;
+
+}
+
+
+.bottom p{
+margin:2px 0;
+}
+    *{
+        padding: 0%;
+    }
+    span{
+        color: #ff7a00;
+    }
+    h5{
+        position: relative;
+        top: 50px;
+        color: black;
+        padding: 0px 10px;
+        margin: 0px 0px 10px 120px;
+    }
+    .course{
+        background: linear-gradient(to right, #ff7a00, #ff3c00);
+        box-shadow:0 5px 10px rgba(0,0,0,0.2);
+        color: white;
+        margin-left: 50px;
+        padding: 5px 10px;
+        margin-top: 140px;
+        border-top-left-radius:10px;
+border-bottom-left-radius:10px;
+    }
+
+    body{
+justify-content:center;
+background:#eee;
+font-family:Arial;
+}
+
+
+.id-card{
+    position: relative;
+    display:inline-block;
+
+width:320px;
+height:520px;
+background-image:url("./idcard-templete.png");
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+border-radius:20px;
+box-shadow:0 10px 50px rgba(0,0,0,0.3);
+overflow:hidden;
+
+}
+
+
+.logo{
+padding:0px 0px 0px 0px;
+
+}
+
+.logo img{
+width:100px;
+height: 150px;
+position: absolute;
+margin: 10px;
+border:3px solid #ff7a00;
+
+border-radius:7px;
+
+
+}
+</style>
+</html>
