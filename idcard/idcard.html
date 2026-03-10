@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>ID Card</title>
 <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
@@ -88,7 +89,8 @@ grid-template-columns:repeat(2,1fr);
 
 #card{
 grid-template-columns:1fr;
-padding:10px;
+padding:0px;
+margin: 10px;
 }
 
 .id-card{
@@ -123,7 +125,7 @@ height:100%;
 width:100px;
 height:150px;
 position:absolute;
-top:10px;
+top:200px;
 left:10px;
 border:3px solid #ff7a00;
 border-radius:7px;
@@ -133,8 +135,8 @@ object-fit:cover;
 .course{
 background:linear-gradient(to right,#ff7a00,#ff3c00);
 color:white;
-padding:5px 10px;
-margin-left:50px;
+padding:5px 20px;
+margin-left:77px;
 margin-top:140px;
 display:inline-block;
 border-top-left-radius:10px;
@@ -144,6 +146,8 @@ box-shadow:0 5px 10px rgba(0,0,0,0.2);
 }
 
 h5{
+    position: relative;
+    top: 65px;
 margin-left:120px;
 margin-top:10px;
 font-size:14px;
