@@ -24,11 +24,11 @@
             <img src="./m-image/N-Home.png" class="navb">
         </a>
 
-        <a href="#">
+        <a href="feedback.html">
             <img src="./m-image/N-feedback.png" class="navb">
         </a>
 
-        <a href="#">
+        <a href="about.html">
             <img src="./m-image/N-about.png" class="navb">
         </a>
     </div>
@@ -72,14 +72,14 @@
     <a href="/years.html"><h1 class="all-year">View Years ( Collaction ) ➜</h1></a>
 
     <div class="info">
-        <h1 class="info-head">2025 Tamil Movies</h1>
+        <h1 class="info-head">2026 Tamil Movies</h1>
         <h1 class="info-all" onclick="filterMovie('Tamil','2026')">View All</h1>
     </div>
 
     <div class="scroll" id="tamilMovies"></div>
 
     <div class="info">
-        <h1 class="info-head">2025 Tamil Movies</h1>
+        <h1 class="info-head">2025 Hollywood Movies</h1>
         <h1 class="info-all" onclick="filterMovie('Hollywood','2026')">View All</h1>
     </div>
 
@@ -340,8 +340,8 @@ fetch("movies.json")
 .then(data => {
     allMovies = data;
 
-    loadSection("Tamil","2025","tamilMovies");
-    loadSection("Hollywood","2024","hollywoodMovies");
+    loadSection("Tamil","2026","tamilMovies");
+    loadSection("Hollywood","2025","hollywoodMovies");
 });
 
 
@@ -352,7 +352,7 @@ container.innerHTML="";
 
 const movies = allMovies
 .filter(m => m.category === category && m.year === year)
-.slice(0,8);
+.slice(0,10);
 
 movies.forEach(movie => {
 
@@ -392,10 +392,10 @@ viewCard.style.background = "black";
 
 /* check category */
 if(category === "Tamil"){
-    viewCard.setAttribute("onclick","filterMovie('Tamil','2025')");
+    viewCard.setAttribute("onclick","filterMovie('Tamil','2026')");
 }
 else if(category === "Hollywood"){
-    viewCard.setAttribute("onclick","filterMovie('Hollywood','2024')");
+    viewCard.setAttribute("onclick","filterMovie('Hollywood','2025')");
 }
 
 const viewImg = document.createElement("img");

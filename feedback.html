@@ -1,0 +1,183 @@
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback</title>
+    <link rel="stylesheet"  href="./index.css" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=NATS:wght@400&display=swap" />
+</head>
+
+<div id="myNav" class="overla">
+    <img id="close" onclick="closeNav()" src="./M Image/Close icon.png"/>
+    <img id="navimg" src="./M Image/VIP Movies.jpg"/>
+    <a href="/index.html"><img id="navb" src="./M Image/N-Home.png"/></a>
+    <a href="/feedback.html"><img id="navb" src="./M Image/N-feedback.png"/></a>
+    <a href="/about.html"><img id="navb" src="./M Image/N-about.png"/></a>
+  </div>
+
+<body style="background-color: rgb(0, 0, 0); width: 980px; color:white; font-family:'Lexend',sans-serif;">
+
+    <div style="position: relative; background-color: rgb(0, 0, 0); height: 110px; width: 980px;">
+        <img id="menu" onclick="openNav()" src="./M Image/Menu icon.png"/>
+        <img id="title" src="./M Image/Vip Title.png"/>
+        <a href="./search.html"><img id="search" src="./M Image/Search icon.png"/></a>
+    </div>
+
+<!-- FEEDBACK CONTENT -->
+<div style="width:900px;background:#111; padding:40px; border-radius:20px;">
+
+<h1 style="font-size:40px; margin-bottom:20px; color:rgba(246, 255, 0, 1);">User Feedback</h1>
+
+<p style="font-size:25px; line-height:1.6;">
+We value your feedback! Your suggestions help improve TVK Movies – Vintage Cinema.
+If you experience any issues or have recommendations, please let us know.
+</p>
+
+<br><br>
+
+<form style="display:flex; flex-direction:column; gap:20px;">
+
+<label style="font-size:25px;">Your Name</label>
+<input type="text" placeholder="Enter your name"
+style="padding:15px; border-radius:8px; border:none; font-size:25px;">
+
+<label style="font-size:25px;">Email Address</label>
+<input type="email" placeholder="Enter your email"
+style="padding:15px; border-radius:8px; border:none; font-size:25px;">
+
+<label style="font-size:25px;">Feedback Type</label>
+<select style="padding:15px; border-radius:8px; border:none; font-size:25px;">
+    <option>General Feedback</option>
+    <option>Bug Report</option>
+    <option>Content Suggestion</option>
+    <option>Copyright Concern</option>
+</select>
+
+<label style="font-size:25px;">Your Message</label>
+<textarea rows="6" placeholder="Write your feedback here..."
+style="padding:15px; border-radius:8px; border:none; font-size:25px;"></textarea>
+
+<button type="submit"
+style="padding:18px; background:rgba(246, 255, 0, 1); border:none; border-radius:10px; font-size:25px; color:rgb(0, 0, 0); cursor:pointer;font-weight: bolder;">
+Submit Feedback
+</button>
+
+</form>
+
+<br><br>
+
+<h2 style="color:rgba(246, 255, 0, 1);">Important Notice</h2>
+
+<p style="font-size:20px; line-height:1.6;">
+TVK Movies only provides access to films that are in the public domain.
+If you believe any content has been included incorrectly, please select
+“Copyright Concern” and provide details. We will review and take appropriate action.
+</p>
+
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center; font-size:20px; color:gray; margin:40px 0;">
+© 2026 TVK Movies – Vintage Cinema<br>
+Public Domain Movies Only
+</div>
+
+</body>
+
+    
+<style>
+
+    body {
+  font-family: 'Lato', sans-serif;
+}
+
+.overla {
+  height: 100%;
+  width: 0%;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  background-color: rgb(16, 16, 19);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overla a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #ffffff;
+  display: block;
+  transition: 0.3s;
+}
+#close{
+    position: absolute; 
+    width: 70px;
+    top: 20px;
+    left: 20px;
+}
+
+
+
+    *{
+        padding: 0%;
+        margin: 0%;
+        text-decoration: none;
+    }
+    #navimg{
+        position: absolute;
+        top: 100px;
+        width: 420px;
+        height: 420px;
+        left: 20px;
+        border-radius: 5px;
+        z-index: 10;
+    }
+    #navb{
+        position: relative;
+        width: 420px;
+        height: 90px;
+        left: 20px;
+        top: 530px;
+        margin-bottom:-17px;
+        z-index: 10;
+        
+        
+    }
+    #menu{
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        top: 20px;
+        left: 20px;
+    }
+    #title{
+        position: absolute;
+        width: 300px;
+        top: 15px;
+        left: 340px;
+    }
+    #search{
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        top: 23px;
+        right: 23px;
+    }
+
+</style>
+
+<script>
+    function openNav() {
+      document.getElementById("myNav").style.width = "460px";
+    }
+    
+    function closeNav() {
+      document.getElementById("myNav").style.width = "0%";
+    }
+    </script>
+
+</html>
