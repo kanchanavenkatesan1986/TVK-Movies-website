@@ -1,27 +1,27 @@
 [
   {
-    "image": "./src/Tere Ishk Mein.jpg",
+    "image": "./src/Slide-Img/Tere Ishk Mein.jpg",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=23"
   },
   {
-    "image": "./src/Captain Hook The Cursed Tides.jpg",
+    "image": "./src/Slide-Img/Captain Hook The Cursed Tides.jpg",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=15"
   },
   {
-    "image": "./src/IPL Indian Penal Law.webp",
+    "image": "./src/Slide-Img/IPL Indian Penal Law.webp",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=22"
   },
   {
-    "image": "./src/Return to The Jurassic.webp",
+    "image": "./src/Slide-Img/Return to The Jurassic.webp",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=12"
   },
   {
-    "image": "./src/sirai.png",
+    "image": "./src/Slide-Img/sirai.png",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=25"
   }
   ,
   {
-    "image": "./src/Dust Bunny.webp",
+    "image": "./src/Slide-Img/Dust Bunny.webp",
     "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=14"
   }
 ]
