@@ -130,7 +130,7 @@ const params = new URLSearchParams(window.location.search);
 const category = params.get("category");
 const year = params.get("year");
 
-fetch("movies.json")
+fetch("data_json/movies.json")
 .then(res => res.json())
 .then(data => {
 

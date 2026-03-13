@@ -234,7 +234,7 @@
 const params = new URLSearchParams(window.location.search);
 const movieId = params.get("reward") || params.get("id");
 
-fetch("./movies.json")
+fetch("data_json/movies.json")
 .then(res => res.json())
 .then(data => {
 

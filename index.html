@@ -273,7 +273,7 @@
 
     let index = 0;
 
-fetch("slider.json")
+fetch("data_json/slider.json")
 .then(res => res.json())
 .then(data => {
 
@@ -335,7 +335,7 @@ location.href =
 
 let allMovies = [];
 
-fetch("movies.json")
+fetch("data_json/movies.json")
 .then(res => res.json())
 .then(data => {
     allMovies = data;
