@@ -1,32 +1,27 @@
 [
   {
-    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBNwEjbRywN_IPzgo7lot7AE73OTkpGiYyZA&s",
-    "link": "#"
+    "image": "./src/Tere Ishk Mein.jpg",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=23"
   },
   {
-    "image": "./Naruto Shippuden.jpg",
-    "link": "/Anime/Naruto Shippuden/naruto shippuden.html"
+    "image": "./src/Captain Hook The Cursed Tides.jpg",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=15"
   },
   {
-    "image": "./attack on titan.jpg",
-    "link": "/Anime/Attack on Titan/attack on titan.html"
+    "image": "./src/IPL Indian Penal Law.webp",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=22"
   },
   {
-    "image": "./Demon Slayer.jpg",
-    "link": "/Anime/Demon Slayer/Demon Slayer.html"
+    "image": "./src/Return to The Jurassic.webp",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=12"
   },
   {
-    "image": "./solo leveling 2.webp",
-    "link": "/Anime/solo leveling s2.html/sololevelings2.html"
+    "image": "./src/sirai.png",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=25"
   }
   ,
   {
-    "image": "./solo leveling 2.webp",
-    "link": "/Anime/solo leveling s2.html/sololevelings2.html"
-  }
-  ,
-  {
-    "image": "./solo leveling 2.webp",
-    "link": "/Anime/solo leveling s2.html/sololevelings2.html"
+    "image": "./src/Dust Bunny.webp",
+    "link": "https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=14"
   }
 ]
