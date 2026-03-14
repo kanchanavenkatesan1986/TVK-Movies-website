@@ -233,13 +233,13 @@
 
 const params = new URLSearchParams(window.location.search);
 
-// SECURITY CHECK
-const unlock = params.get("unlock");
+// // SECURITY CHECK
+// const unlock = params.get("unlock");
 
-if(unlock !== "tvk123"){
-document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:200px;'>⚠ Please watch ad to unlock movie</h1>";
-throw new Error("Ad not watched");
-}
+// if(unlock !== "tvk123"){
+// document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:200px;'>⚠ Please watch ad to unlock movie</h1>";
+// throw new Error("Ad not watched");
+// }
 
 // GET MOVIE ID
 const movieId = params.get("id") || params.get("reward");
