@@ -147,7 +147,7 @@ filtered.forEach(movie => {
 
 const card = document.createElement("a");
 
-card.href = "watch.html?reward=" + movie.id;
+card.href = "watch.html?id=" + movie.id + "&reward=" + movie.id;
 
 card.innerHTML = `
 <div class="list">
