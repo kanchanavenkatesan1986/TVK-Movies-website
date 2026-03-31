@@ -15,39 +15,29 @@
 body{
     background:#18191a;
 }
-
-/* Layout */
 #main{
     display:flex;
     gap:15px;
     padding:15px;
     min-height:100vh;
 }
-
-/* Panels */
 .sub{
     flex:1;
     background:#242526;
     border-radius:12px;
     overflow-y:auto;
 }
-
-/* Mobile */
 @media(max-width:768px){
     #main{
         flex-direction:column;
     }
 }
-
-/* Header */
 .title{
     padding:15px;
     font-size:20px;
     color:#1877f2;
     border-bottom:1px solid #3a3b3c;
 }
-
-/* Form */
 form{
     padding:15px;
 }
@@ -58,8 +48,6 @@ input{
     border-radius:8px;
     border:none;
 }
-
-/* Button */
 button{
     padding:10px 20px;
     background:#1877f2;
@@ -67,8 +55,6 @@ button{
     border:none;
     border-radius:8px;
 }
-
-/* Card */
 .card{
     background:#3a3b3c;
     margin:15px;
@@ -76,8 +62,6 @@ button{
     border-radius:12px;
     color:white;
 }
-
-/* Header */
 .head{
     display:flex;
     gap:10px;
@@ -87,15 +71,11 @@ button{
     width:45px;
     border-radius:50%;
 }
-
-/* Image */
 .post-img{
     width:100%;
     margin-top:10px;
     border-radius:10px;
 }
-
-/* Actions */
 .actions{
     display:flex;
     justify-content:space-between;
@@ -119,7 +99,6 @@ button{
 
 <div id="main">
 
-<!-- LEFT -->
 <div class="sub">
     <div class="title">Facebook Studio</div>
 
@@ -132,7 +111,6 @@ button{
     </form>
 </div>
 
-<!-- RIGHT -->
 <div class="sub">
     <div class="title">News Feed</div>
     <div id="feed"></div>
@@ -142,7 +120,6 @@ button{
 
 <script>
 
-// ADD POST
 function addPost(){
 
     var file = document.getElementById("img").files[0];
@@ -189,7 +166,6 @@ function addPost(){
 }
 
 
-// LIKE
 function likePost(btn){
 
     var span = btn.getElementsByTagName("span")[0];
@@ -199,7 +175,6 @@ function likePost(btn){
 }
 
 
-// DISLIKE
 function dislikePost(btn){
 
     var span = btn.getElementsByTagName("span")[0];
@@ -209,10 +184,9 @@ function dislikePost(btn){
 }
 
 
-// DELETE (FIXED)
 function deletePost(btn){
 
-    var card = btn.closest(".card"); // ✅ best method
+    var card = btn.closest(".card"); 
     card.remove();
 }
 
