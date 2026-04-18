@@ -164,8 +164,6 @@ function addPost(){
 
     reader.readAsDataURL(file);
 }
-
-
 function likePost(btn){
 
     var span = btn.getElementsByTagName("span")[0];
@@ -173,8 +171,6 @@ function likePost(btn){
 
     span.innerText = count + 1;
 }
-
-
 function dislikePost(btn){
 
     var span = btn.getElementsByTagName("span")[0];
@@ -182,8 +178,6 @@ function dislikePost(btn){
 
     span.innerText = count + 1;
 }
-
-
 function deletePost(btn){
 
     var card = btn.closest(".card"); 

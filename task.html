@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini App</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#0f172a;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:30px;
+    padding:20px;
+}
+
+/* Card UI */
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:15px;
+    width:300px;
+    box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Inputs */
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    outline:none;
+}
+
+/* Buttons */
+button{
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#3b82f6;
+    color:white;
+    margin-top:5px;
+}
+button:hover{
+    background:#2563eb;
+}
+
+/* Error */
+.error{
+    color:red;
+    font-size:14px;
+}
+
+/* Image slider */
+img{
+    width:300px;
+    height:200px;
+    border-radius:10px;
+    border:2px solid white;
+}
+
+/* List */
+ul{
+    list-style:none;
+    padding:0;
+}
+li{
+    background:#334155;
+    margin:5px 0;
+    padding:10px;
+    border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+    <h2>Login</h2>
+
+    <input id="email" type="text" placeholder="Enter Email">
+    <span id="emailError" class="error"></span>
+
+    <input id="pass" type="password" placeholder="Enter Password">
+    <span id="passError" class="error"></span>
+
+    <button onclick="togglePassword()">Show Password</button>
+    <button onclick="validate()">Login</button>
+</div>
+
+
+
+
+
+
+<div class="card" style="text-align:center;">
+    <h2>Image Slider</h2>
+
+    <img id="slide" src="">
+
+    <br><br>
+    <button onclick="back()">⬅</button>
+    <button onclick="front()">➡</button>
+</div>
+
+
+
+
+
+
+
+<div class="card">
+    <h2>Todo List</h2>
+
+    <input id="itemInput" placeholder="Enter item">
+    <button onclick="addItem()">Add</button>
+
+    <ul id="list"></ul>
+</div>
+
+<script>
+
+
+
+
+
+let arr = [
+"https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/12/iron-man_suiting-up.jpg",
+"https://wallpapers.com/images/hd/spiderman-hollywood-movie-7m0ezmag7o8ygozi.jpg",
+"https://wallpapers.com/images/featured/thor-background-rogwodqip00jntn9.jpg"
+];
+
+let index = 0;
+let slide = document.getElementById("slide");
+
+
+slide.src = arr[0];
+
+function back(){
+    index--;
+    if(index < 0){
+        index = arr.length - 1;
+    }
+    slide.src = arr[index];
+}
+
+function front(){
+    index++;
+    if(index >= arr.length){
+        index = 0;
+    }
+    slide.src = arr[index];
+}
+
+
+function togglePassword(){
+    let password = document.getElementById("pass");
+
+    if(password.type === "password"){
+        password.type = "text";
+        setTimeout(()=>{
+              password.type = "password";
+        },3000)
+    } else {
+        password.type = "password";
+    }
+}
+
+
+
+
+function validate(){
+
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("pass").value;
+
+    let emailError = document.getElementById("emailError");
+    let passError = document.getElementById("passError");
+
+    emailError.innerText = "";
+    passError.innerText = "";
+
+
+    if(email === ""){
+        emailError.innerText = "Email required";
+       
+    }
+
+    if(pass.length < 6){
+        passError.innerText = "Password must be 6+ chars";
+     
+    }
+
+    if(valid){
+        alert("Login Success ✅");
+    }
+}
+
+
+
+
+function addItem(){
+    let input = document.getElementById("itemInput");
+    let value = input.value;
+
+    if(value === "") return;
+
+    let li = document.createElement("li");
+    li.innerHTML = `${value} <button onclick="deleteItem(this)">❌</button>`;
+
+    document.getElementById("list").appendChild(li);
+
+    input.value = "";
+}
+
+function deleteItem(btn){
+    btn.parentElement.remove();
+}
+
+</script>
+
+</body>
+</html>
