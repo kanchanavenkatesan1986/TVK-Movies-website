@@ -231,7 +231,7 @@
 const params = new URLSearchParams(window.location.search);
 const movieId = params.get("reward") || params.get("id");
 
-fetch("data_json/movies.json")
+fetch("https://akatsuki-pvt-ltd-default-rtdb.firebaseio.com/.json")
 .then(res => res.json())
 .then(data => {
 

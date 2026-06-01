@@ -333,7 +333,7 @@ location.href =
 
 let allMovies = [];
 
-fetch("data_json/movies.json")
+fetch("https://akatsuki-pvt-ltd-default-rtdb.firebaseio.com/.json")
 .then(res => res.json())
 .then(data => {
     allMovies = data;
