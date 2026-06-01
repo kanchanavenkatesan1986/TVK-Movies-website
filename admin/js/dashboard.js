@@ -71,8 +71,8 @@ async function loadDashboardData() {
         
         // --- COUNTER STATS ---
         const total = movies.length;
-        const tamil = movies.filter(m => m.category === 'Tamil' || m.language === 'Tamil').length;
-        const hollywood = movies.filter(m => m.category === 'Hollywood' || m.language === 'English').length;
+        const tamil = movies.filter(m => m.category === 'Tamil' ).length;
+        const hollywood = movies.filter(m => m.category === 'Hollywood').length;
         const other = total - (tamil + hollywood);
 
         // Bind counts to cards
