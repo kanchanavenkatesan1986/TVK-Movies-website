@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Movies Admin - Dashboard Hub</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    
+    <!-- Auth Guard - Executes in head to lock page render if unauthorized -->
+    <script src="../js/auth.js"></script>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Page Loading Overlay -->
+    <div id="global-loader" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-wrapper">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21,6H3V5H21V6M21,18H3V19H21V18M18,9H6V15H18V9M8,11H10V13H8V11M14,11H16V13H14V11Z" />
+                    </svg>
+                </div>
+                <span class="brand-text">TVK Movies</span>
+            </div>
+            
+            <ul class="sidebar-nav">
+                <li class="nav-item active">
+                    <a href="dashboard.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M13,3V9H21V3H13M13,21H21V11H13V21M3,21H11V15H3V21M3,13H11V3H3V13Z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="movies.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18,9H16V7H18M18,13H16V11H18M18,17H16V15H18M8,9H6V7H8M8,13H6V11H8M8,17H6V15H8M12,9H10V7H12M12,13H10V11H12M12,17H10V15H12M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4Z"/>
+                        </svg>
+                        <span>Movies List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add-movie.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        <span>Add Movie</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.47,5.34 14.86,5.08L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.14,5.08C8.53,5.34 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.95C7.96,18.34 8.53,18.66 9.14,18.92L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.86,18.92C15.47,18.66 16.04,18.34 16.56,17.95L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <li class="nav-item" style="list-style:none">
+                    <a href="#" id="sidebar-logout">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </div>
+        </aside>
+
+        <!-- MAIN DISPLAY PANEL -->
+        <main class="main-panel">
+            
+            <!-- PANEL HEADER -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle Sidebar Navigation">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/>
+                        </svg>
+                    </button>
+                    <h2 class="page-title">Dashboard Overview</h2>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="avatar-letters">AD</div>
+                        <div class="user-info">
+                            <span class="user-name" id="profile-name">Admin User</span>
+                            <span class="user-role">Super Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- MAIN SCROLL AREA -->
+            <div class="content-body">
+                
+                <!-- METRIC CARDS GRID -->
+                <div class="stats-grid">
+                    <!-- Card 1 -->
+                    <div class="stat-card glass-container stat-primary">
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-total-movies">-</div>
+                            <div class="stat-label">Total Movies</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="stat-card glass-container stat-accent">
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M12 4A8 8 0 0 1 20 12A8 8 0 0 1 12 20A8 8 0 0 1 4 12A8 8 0 0 1 12 4M12 6A6 6 0 0 0 6 12A6 6 0 0 0 12 18A6 6 0 0 0 18 12A6 6 0 0 0 12 6M12 8A4 4 0 0 1 16 12A4 4 0 0 1 12 16A4 4 0 0 1 8 12A4 4 0 0 1 12 8Z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-tamil-movies">-</div>
+                            <div class="stat-label">Tamil Movies</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="stat-card glass-container stat-success">
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C11.45 12.9 11 13.5 11 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H5c0-3.31 2.69-6 6-6s6 2.69 6 6c0 .88-.36 1.68-.93 2.25z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-hollywood-movies">-</div>
+                            <div class="stat-label">Hollywood Movies</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="stat-card glass-container stat-warning">
+                        <div class="stat-icon-wrapper">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="stat-other-movies">-</div>
+                            <div class="stat-label">Other Genres</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN SPLIT CONTENT -->
+                <div class="dashboard-content">
+                    
+                    <!-- LATEST UPLOADS -->
+                    <div class="dashboard-card glass-container">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21M10,18L16,12L10,6V18Z" />
+                                </svg>
+                                <span>Latest Added Movies</span>
+                            </h3>
+                            <a href="movies.html" class="btn btn-secondary btn-icon" title="View All Movies">
+                                <svg viewBox="0 0 24 24"><path d="M8.59,16.59L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.59Z"/></svg>
+                            </a>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="recent-table-wrapper">
+                                <table class="recent-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Movie Details</th>
+                                            <th>Category</th>
+                                            <th>Language</th>
+                                            <th>Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-movies-list">
+                                        <tr>
+                                            <td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px 0;">
+                                                Loading recent uploads...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STATISTICS & PROGRESS METERS -->
+                    <div class="dashboard-card glass-container">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M16,11.78L20.22,16L22,14.22L16,8.22L12,12.22L8.22,8.44L12.44,4.22L10.66,2.44L4.66,8.44L8.66,12.44L4.22,16.88L6,18.66L10.44,14.22L14.44,18.22L16,16.66V11.78M2,20H22V22H2V20Z"/>
+                                </svg>
+                                <span>Category Analytics</span>
+                            </h3>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="distribution-list" id="category-distribution">
+                                <div style="text-align:center;color:var(--text-muted);padding:40px 0;">
+                                    Processing analytics...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Load centralized API Client & UI actions -->
+    <script src="../js/api.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>

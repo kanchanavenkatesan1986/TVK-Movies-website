@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Movies Admin - Panel Settings</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/movies.css">
+    
+    <!-- Auth Guard - Executes in head to lock page render if unauthorized -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        /* Settings layout overrides */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .settings-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .settings-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card-title svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .toggle-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+        }
+
+        .toggle-switch-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Checkbox switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--card-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-main);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Category tags grid */
+        .tags-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-tag {
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .category-tag:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .category-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent);
+        }
+
+        /* Color bubbles */
+        .color-bubble-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .color-bubble {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .color-bubble:hover {
+            transform: scale(1.15);
+        }
+
+        .color-bubble.active {
+            border-color: #fff;
+            box-shadow: 0 0 12px currentColor;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Page Loading Overlay -->
+    <div id="global-loader" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-wrapper">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21,6H3V5H21V6M21,18H3V19H21V18M18,9H6V15H18V9M8,11H10V13H8V11M14,11H16V13H14V11Z" />
+                    </svg>
+                </div>
+                <span class="brand-text">TVK Movies</span>
+            </div>
+            
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M13,3V9H21V3H13M13,21H21V11H13V21M3,21H11V15H3V21M3,13H11V3H3V13Z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="movies.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18,9H16V7H18M18,13H16V11H18M18,17H16V15H18M8,9H6V7H8M8,13H6V11H8M8,17H6V15H8M12,9H10V7H12M12,13H10V11H12M12,17H10V15H12M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4Z"/>
+                        </svg>
+                        <span>Movies List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add-movie.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        <span>Add Movie</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="settings.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.47,5.34 14.86,5.08L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.14,5.08C8.53,5.34 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.95C7.96,18.34 8.53,18.66 9.14,18.92L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.86,18.92C15.47,18.66 16.04,18.34 16.56,17.95L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <li class="nav-item" style="list-style:none">
+                    <a href="#" id="sidebar-logout">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </div>
+        </aside>
+
+        <!-- MAIN PANEL -->
+        <main class="main-panel">
+            
+            <!-- HEADER -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/>
+                        </svg>
+                    </button>
+                    <h2 class="page-title">Admin Configuration Settings</h2>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="avatar-letters">AD</div>
+                        <div class="user-info">
+                            <span class="user-name" id="profile-name">Admin User</span>
+                            <span class="user-role">Super Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- BODY -->
+            <div class="content-body">
+                
+                <div class="settings-grid">
+                    
+                    <!-- API CONNECTION SETTINGS -->
+                    <div class="settings-card glass-container">
+                        <h3 class="settings-card-title">
+                            <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/></svg>
+                            <span>REST API Integrations</span>
+                        </h3>
+
+                        <div class="toggle-switch-wrapper">
+                            <span class="toggle-switch-label">Offline Sandbox Mode</span>
+                            <label class="switch">
+                                <input type="checkbox" id="api-mode-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
+                            * Offline Sandbox loads and writes to local browser cache (localStorage). Useful if database worker server is unreachable or CORS blocks requests.
+                        </p>
+
+                        <div class="form-group-custom">
+                            <label class="form-label" for="api-base-url-input">API Base URL</label>
+                            <input type="url" class="form-input-custom" id="api-base-url-input" value="https://database.kanchanavenkatesan1986.workers.dev" disabled>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN ACCESS SETTINGS -->
+                    <div class="settings-card glass-container">
+                        <h3 class="settings-card-title">
+                            <svg viewBox="0 0 24 24"><path d="M12,12H17V22H12V12M17,22H22V12H17V22M12,2H17V12H12V2M17,12H22V2H17V12M2,12H7V22H2V12M7,22H12V12H7V22M2,2H7V12H2V2M7,12H12V2H7V12Z"/></svg>
+                            <span>Security credentials</span>
+                        </h3>
+
+                        <div class="form-group-custom">
+                            <label class="form-label" for="admin-user-input">Admin Username</label>
+                            <input type="text" class="form-input-custom" id="admin-user-input" required>
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label class="form-label" for="admin-pass-input">Admin Password</label>
+                            <input type="text" class="form-input-custom" id="admin-pass-input" required>
+                        </div>
+
+                        <button class="btn btn-primary" id="save-creds-btn" style="margin-top:10px;">Save credentials</button>
+                    </div>
+
+                    <!-- THEME CUSTOMIZATION -->
+                    <div class="settings-card glass-container">
+                        <h3 class="settings-card-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 3C11.45 3 11 3.45 11 4V5C11 5.55 11.45 6 12 6C15.86 6 19 9.14 19 13C19 15.39 17.8 17.5 15.93 18.77C15.48 19.07 15.42 19.7 15.8 20.08C16.18 20.46 16.8 20.4 17.11 19.95C19.5 16.5 19.5 11.5 17.11 8.05C16.8 7.6 16.18 7.54 15.8 7.92C15.42 8.3 15.48 8.93 15.93 9.23C16.6 9.69 17.12 10.3 17.44 11C16.87 10.38 16.03 10 15.1 10C13.39 10 12 11.39 12 13.1C12 14.1 12.48 15 13.22 15.57C12.65 14.95 11.81 14.57 10.88 14.57C9.17 14.57 7.78 15.96 7.78 17.67C7.78 18.57 8.16 19.38 8.78 19.95C8.21 19.38 7.83 18.57 7.83 17.67C7.83 15.96 9.22 14.57 10.93 14.57C11.86 14.57 12.7 14.95 13.27 15.57C12.53 15 12.05 14.1 12.05 13.1C12.05 11.39 13.44 10 15.15 10C16.08 10 16.92 10.38 17.49 11C17.17 10.3 16.65 9.69 15.98 9.23C15.53 8.93 15.47 8.3 15.85 7.92C16.23 7.54 16.85 7.6 17.16 8.05C18.66 10.23 19.26 12.87 18.86 15.47C18.47 18.07 17.13 20.35 15.08 21.72C14.63 22.02 14.03 21.96 13.65 21.58C13.27 21.2 13.33 20.57 13.78 20.27C15 19.45 15.8 18.12 15.96 16.62C14.36 17.38 12.63 17.5 10.95 16.97C9.27 16.44 7.86 15.32 7.05 13.82C5.44 10.82 5.89 7.09 8.14 4.54C8.5 4.14 8.44 3.51 8.04 3.15C7.64 2.79 7.01 2.85 6.65 3.25C3.89 6.38 3.34 10.95 5.3 14.61C7.26 18.27 11.19 20.57 15.35 20.3C15.19 20.57 14.97 20.81 14.71 21C14.26 21.3 13.66 21.24 13.28 20.86C12.9 20.48 12.96 19.85 13.41 19.55C14.63 18.73 15.43 17.4 15.59 15.9C13.99 16.66 12.26 16.78 10.58 16.25C8.9 15.72 7.49 14.6 6.68 13.1C5.07 10.1 5.52 6.37 7.77 3.82C8.13 3.42 8.07 2.79 7.67 2.43C7.27 2.07 6.64 2.13 6.28 2.53C3.52 5.66 2.97 10.23 4.93 13.89C6.89 17.55 10.82 19.85 14.98 19.58C14.19 20.3 13.19 20.78 12.1 20.95C11.55 21.03 11.05 20.65 10.97 20.1C10.89 19.55 11.27 19.05 11.82 18.97C13.2 18.76 14.4 18.06 15.22 17.03C13.62 17.79 11.89 17.91 10.21 17.38C8.53 16.85 7.12 15.73 6.31 14.23C4.7 11.23 5.15 7.5 7.4 4.95C7.76 4.55 7.7 3.92 7.3 3.56C6.9 3.2 6.27 3.26 5.91 3.66C3.15 6.79 2.6 11.36 4.56 15.02C6.52 18.68 10.45 20.98 14.61 20.71C14.86 20.71 15.11 20.67 15.35 20.62C15.9 20.5 16.4 20.88 16.52 21.43C16.64 21.98 16.26 22.48 15.71 22.6C14.49 22.86 13.24 22.81 12.05 22.46C11.5 22.3 11.15 21.75 11.31 21.2C11.47 20.65 12.02 20.3 12.57 20.46C13.44 20.72 14.37 20.76 15.27 20.57C13.67 21.33 11.94 21.45 10.26 20.92C8.58 20.39 7.17 19.27 6.36 17.77C4.75 14.77 5.2 11.04 7.45 8.49C7.81 8.09 7.75 7.46 7.35 7.1C6.95 6.74 6.32 6.8 5.96 7.2C3.2 10.33 2.65 14.9 4.61 18.56C6.57 22.22 10.5 24.52 14.66 24.25V24Z"/></svg>
+                            <span>Glow Theme Customizer</span>
+                        </h3>
+
+                        <div class="form-group-custom">
+                            <span class="form-label">Active Glow Theme</span>
+                            <div class="color-bubble-row">
+                                <div class="color-bubble active" id="theme-violet" style="background:#8b5cf6; color:#8b5cf6;" title="Cosmic Purple"></div>
+                                <div class="color-bubble" id="theme-cyan" style="background:#06b6d4; color:#06b6d4;" title="Neon Cyan"></div>
+                                <div class="color-bubble" id="theme-emerald" style="background:#10b981; color:#10b981;" title="Emerald Mint"></div>
+                                <div class="color-bubble" id="theme-rose" style="background:#f43f5e; color:#f43f5e;" title="Sunset Rose"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CATEGORIES MANAGEMENT -->
+                    <div class="settings-card glass-container" style="grid-column: span 2;">
+                        <h3 class="settings-card-title">
+                            <svg viewBox="0 0 24 24"><path d="M7 5H21V7H7V5M7 11H21V13H7V11M7 17H21V19H7V17M3 5H5V7H3V5M3 11H5V13H3V11M3 17H5V19H3V17Z"/></svg>
+                            <span>Catalog Categories Management</span>
+                        </h3>
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">
+                            The TVK Movies frontend renders the following movie classifications in navigation selectors:
+                        </p>
+                        
+                        <div class="tags-grid" id="categories-tags-box">
+                            <!-- Render tags -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- UI Helper and Auth Scripts -->
+    <script src="../js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize profiles
+            initUserProfile();
+            setupSidebarToggle();
+
+            // 1. API Mode toggle setup
+            initAPISettings();
+
+            // 2. Hydrate & Bind Credentials settings
+            initCredentialSettings();
+
+            // 3. Render list categories
+            renderCategories();
+
+            // 4. Hydrate & Bind Custom Glass Colors Theme
+            initThemeCustomizer();
+        });
+
+        function initUserProfile() {
+            const userNameElement = document.getElementById('profile-name');
+            const avatarLetters = document.getElementById('avatar-letters');
+            const logoutBtn = document.getElementById('sidebar-logout');
+
+            if (window.auth) {
+                const username = window.auth.getUsername();
+                if (userNameElement) userNameElement.textContent = username;
+                if (avatarLetters) {
+                    avatarLetters.textContent = username.slice(0, 2).toUpperCase();
+                }
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to sign out?')) {
+                        window.auth.logout();
+                    }
+                });
+            }
+        }
+
+        function setupSidebarToggle() {
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            const sidebar = document.getElementById('app-sidebar');
+
+            if (toggleBtn && sidebar) {
+                toggleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('open');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggleBtn) {
+                        sidebar.classList.remove('open');
+                    }
+                });
+            }
+        }
+
+        /* --- SETTINGS ENGINES --- */
+
+        function initAPISettings() {
+            const toggle = document.getElementById('api-mode-toggle');
+            const mode = window.api.mode;
+
+            if (toggle) {
+                toggle.checked = (mode === 'local');
+
+                toggle.addEventListener('change', () => {
+                    const newMode = toggle.checked ? 'local' : 'live';
+                    window.api.mode = newMode;
+                    showToast('Connection Saved', `REST Client is now in ${newMode.toUpperCase()} mode.`, 'success');
+                });
+            }
+        }
+
+        function initCredentialSettings() {
+            const userIn = document.getElementById('admin-user-input');
+            const passIn = document.getElementById('admin-pass-input');
+            const saveBtn = document.getElementById('save-creds-btn');
+
+            if (userIn && passIn && saveBtn) {
+                userIn.value = localStorage.getItem('tvk_admin_config_user') || 'admin';
+                passIn.value = localStorage.getItem('tvk_admin_config_pass') || 'admin123';
+
+                saveBtn.addEventListener('click', () => {
+                    const user = userIn.value.trim();
+                    const pass = passIn.value.trim();
+
+                    if (!user || !pass) {
+                        showToast('Credentials Error', 'Username and Password fields cannot be empty.', 'error');
+                        return;
+                    }
+
+                    localStorage.setItem('tvk_admin_config_user', user);
+                    localStorage.setItem('tvk_admin_config_pass', pass);
+                    showToast('Access Key Changed', 'Security credential credentials updated.', 'success');
+                });
+            }
+        }
+
+        function renderCategories() {
+            const box = document.getElementById('categories-tags-box');
+            if (!box) return;
+
+            const list = ['Tamil', 'Hollywood', 'Telugu', 'Malayalam', 'Kannada', 'Hindi', 'Web Series'];
+            box.innerHTML = '';
+
+            list.forEach(cat => {
+                const tag = document.createElement('div');
+                tag.className = 'category-tag';
+                tag.innerHTML = `
+                    <div class="category-dot"></div>
+                    <span>${cat}</span>
+                `;
+                box.appendChild(tag);
+            });
+        }
+
+        /* --- DYNAMIC GLASS ORBS THEME CUSTOMIZER --- */
+        
+        function initThemeCustomizer() {
+            const themes = [
+                { id: 'theme-violet', primary: '#8b5cf6', accent: '#06b6d4', key: 'violet' },
+                { id: 'theme-cyan', primary: '#06b6d4', accent: '#10b981', key: 'cyan' },
+                { id: 'theme-emerald', primary: '#10b981', accent: '#f59e0b', key: 'emerald' },
+                { id: 'theme-rose', primary: '#f43f5e', accent: '#8b5cf6', key: 'rose' }
+            ];
+
+            // Restore from storage if existing
+            const cachedTheme = localStorage.getItem('tvk_glow_theme') || 'violet';
+            
+            themes.forEach(t => {
+                const bubble = document.getElementById(t.id);
+                if (!bubble) return;
+
+                if (t.key === cachedTheme) {
+                    // Activate on bubbles
+                    document.querySelectorAll('.color-bubble').forEach(b => b.classList.remove('active'));
+                    bubble.classList.add('active');
+                    applyGlobalGlow(t.primary, t.accent);
+                }
+
+                bubble.addEventListener('click', () => {
+                    document.querySelectorAll('.color-bubble').forEach(b => b.classList.remove('active'));
+                    bubble.classList.add('active');
+                    
+                    // Set custom properties
+                    applyGlobalGlow(t.primary, t.accent);
+
+                    // Cache selection
+                    localStorage.setItem('tvk_glow_theme', t.key);
+                    showToast('Theme Updated', `Background neon orbs tuned.`, 'success');
+                });
+            });
+        }
+
+        function applyGlobalGlow(prim, acc) {
+            document.documentElement.style.setProperty('--primary', prim);
+            document.documentElement.style.setProperty('--primary-glow', prim + '66'); // alpha 40%
+            document.documentElement.style.setProperty('--accent', acc);
+            document.documentElement.style.setProperty('--accent-glow', acc + '4D'); // alpha 30%
+        }
+
+        // Toast Alerts system (identical style)
+        function showToast(title, desc, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconPath = '';
+            if (type === 'success') {
+                iconPath = '<path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>';
+            } else if (type === 'error') {
+                iconPath = '<path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+            } else {
+                iconPath = '<path d="M11,9H13V11H11V9M11,13H13V17H11V13M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+            }
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <svg viewBox="0 0 24 24">${iconPath}</svg>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-desc">${desc}</div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 50);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+    </script>
+
+    <!-- Run active Theme loader on load before rendering orbs -->
+    <script>
+        (function() {
+            const cachedTheme = localStorage.getItem('tvk_glow_theme') || 'violet';
+            const map = {
+                violet: { p: '#8b5cf6', a: '#06b6d4' },
+                cyan: { p: '#06b6d4', a: '#10b981' },
+                emerald: { p: '#10b981', a: '#f59e0b' },
+                rose: { p: '#f43f5e', a: '#8b5cf6' }
+            };
+            const theme = map[cachedTheme];
+            if (theme) {
+                document.documentElement.style.setProperty('--primary', theme.p);
+                document.documentElement.style.setProperty('--primary-glow', theme.p + '66');
+                document.documentElement.style.setProperty('--accent', theme.a);
+                document.documentElement.style.setProperty('--accent-glow', theme.a + '4D');
+            }
+        })();
+    </script>
+</body>
+</html>
