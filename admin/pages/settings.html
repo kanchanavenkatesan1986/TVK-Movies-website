@@ -25,6 +25,29 @@
             gap: 20px;
         }
 
+        .settings-wide {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .settings-wide {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .settings-grid {
+                gap: 16px;
+            }
+            .settings-card {
+                padding: 16px;
+                gap: 16px;
+            }
+            .settings-card-title {
+                padding-bottom: 8px;
+            }
+        }
+
         .settings-card-title {
             font-size: 1.05rem;
             font-weight: 700;
@@ -328,7 +351,7 @@
                     </div>
 
                     <!-- CATEGORIES MANAGEMENT -->
-                    <div class="settings-card glass-container" style="grid-column: span 2;">
+                    <div class="settings-card glass-container settings-wide">
                         <h3 class="settings-card-title">
                             <svg viewBox="0 0 24 24"><path d="M7 5H21V7H7V5M7 11H21V13H7V11M7 17H21V19H7V17M3 5H5V7H3V5M3 11H5V13H3V11M3 17H5V19H3V17Z"/></svg>
                             <span>Catalog Categories Management</span>
