@@ -240,6 +240,7 @@ body::after {
     flex: 1;
     margin-left: var(--sidebar-width);
     min-height: 100vh;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     transition: margin var(--transition-speed) ease;
@@ -658,6 +659,16 @@ body::after {
     }
     .main-header {
         padding: 0 16px;
+    }
+    .user-info {
+        display: none;
+    }
+    .page-title {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 160px;
     }
     .toast {
         min-width: calc(100vw - 32px);
