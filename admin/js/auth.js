@@ -8,14 +8,14 @@ const AUTH_USER_KEY = 'tvk_admin_username';
 
 class AuthSystem {
     constructor() {
-        // Allow user configuration, default to: admin / admin123
+        // Allow user configuration, default to: Ellayaff / Ellayaff@.1
         if (!localStorage.getItem('tvk_admin_config_user')) {
-            localStorage.setItem('tvk_admin_config_user', 'admin');
-            localStorage.setItem('tvk_admin_config_pass', 'admin123');
+            localStorage.setItem('tvk_admin_config_user', 'Ellayaff');
+            localStorage.setItem('tvk_admin_config_pass', 'Ellayaff@.1');
         }
     }
 
-    /**
+    /**g
      * Checks if the user is authenticated in the current session
      */
     isAuthenticated() {
