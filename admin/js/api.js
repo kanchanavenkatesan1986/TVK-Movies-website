@@ -8,47 +8,14 @@ const API_BASE_URL = 'https://database.kanchanavenkatesan1986.workers.dev';
 const API_MODE_KEY = 'tvk_api_mode'; // 'live' or 'local'
 const LOCAL_MOVIES_KEY = 'tvk_local_movies';
 
-// Default mock data is kept empty as requested
-const DEFAULT_MOCK_DATA = [];
-
 class MovieAPI {
     constructor() {
-        // Initialize API mode
-        if (!localStorage.getItem(API_MODE_KEY)) {
-            localStorage.setItem(API_MODE_KEY, 'live');
-        }
-        
-        // Proactive migration check: If local storage has the old mock data, clear it!
-        try {
-            const currentLocal = localStorage.getItem(LOCAL_MOVIES_KEY);
-            if (currentLocal) {
-                const parsed = JSON.parse(currentLocal);
-                if (Array.isArray(parsed) && parsed.some(m => m.title === "Couple Friendly" && m.director === "Ashwin Chandrasekar")) {
-                    localStorage.removeItem(LOCAL_MOVIES_KEY);
-                }
-            }
-        } catch (e) {
-            console.warn('Local storage migration failed: ', e);
-        }
-
-        // Seed local storage with mock data if it doesn't exist
-        if (!localStorage.getItem(LOCAL_MOVIES_KEY)) {
-            localStorage.setItem(LOCAL_MOVIES_KEY, JSON.stringify(DEFAULT_MOCK_DATA));
-        }
-    }
-
-    get mode() {
-        return localStorage.getItem(API_MODE_KEY);
-    }
-
-    set mode(value) {
-        if (value === 'live' || value === 'local') {
-            localStorage.setItem(API_MODE_KEY, value);
-        }
+        // Enforce live mode only
+        this.mode = 'live';
     }
 
     /**
-     * Helper to show loading states and toast messages
+     * Show/Hide global loading overlay
      */
     showLoader(show) {
         const loader = document.getElementById('global-loader');
@@ -56,6 +23,21 @@ class MovieAPI {
             if (show) loader.classList.add('active');
             else loader.classList.remove('active');
         }
+    }
+
+    /**
+     * Set the current mode (No-op now since we enforce live)
+     */
+    setMode(mode) {
+        this.mode = 'live';
+        console.warn('API mode is locked to live database only.');
+    }
+
+    /**
+     * Get the current mode
+     */
+    getMode() {
+        return this.mode;
     }
 
     /**
@@ -111,12 +93,6 @@ class MovieAPI {
     async getMovies() {
         this.showLoader(true);
         try {
-            if (this.mode === 'local') {
-                // Return local storage mock
-                return this.getLocalMovies();
-            }
-            
-            // Try fetching from the database worker
             const res = await fetch(`${API_BASE_URL}/movies`);
             if (!res.ok) throw new Error('API server returned error status ' + res.status);
             const data = await res.json();
@@ -137,10 +113,6 @@ class MovieAPI {
         this.showLoader(true);
         const movieId = parseInt(id, 10);
         try {
-            if (this.mode === 'local') {
-                return this.getLocalMovie(movieId);
-            }
-            
             const res = await fetch(`${API_BASE_URL}/movies/${movieId}`);
             if (!res.ok) throw new Error('API server returned status ' + res.status);
             const movie = await res.json();
@@ -160,10 +132,6 @@ class MovieAPI {
         this.showLoader(true);
         const cleanData = this.sanitizeMovie(movieData);
         try {
-            if (this.mode === 'local') {
-                return this.addLocalMovie(cleanData);
-            }
-            
             const dbPayload = this.mapFrontendToDb(cleanData);
             const res = await fetch(`${API_BASE_URL}/movies`, {
                 method: 'POST',
@@ -189,10 +157,6 @@ class MovieAPI {
         const movieId = parseInt(id, 10);
         const cleanData = this.sanitizeMovie(movieData);
         try {
-            if (this.mode === 'local') {
-                return this.updateLocalMovie(movieId, cleanData);
-            }
-            
             const dbPayload = this.mapFrontendToDb(cleanData);
             const res = await fetch(`${API_BASE_URL}/movies/${movieId}`, {
                 method: 'PUT',
@@ -217,10 +181,6 @@ class MovieAPI {
         this.showLoader(true);
         const movieId = parseInt(id, 10);
         try {
-            if (this.mode === 'local') {
-                return this.deleteLocalMovie(movieId);
-            }
-            
             const res = await fetch(`${API_BASE_URL}/movies/${movieId}`, {
                 method: 'DELETE'
             });
@@ -234,47 +194,86 @@ class MovieAPI {
         }
     }
 
-    /* --- LOCAL STORAGE DATABASE ENGINES --- */
-    getLocalMovies() {
-        const data = localStorage.getItem(LOCAL_MOVIES_KEY);
-        return data ? JSON.parse(data) : [];
+    /**
+     * Fetches slider slides (maximum 6 slides)
+     */
+    async getSlider() {
+        this.showLoader(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/slider`);
+            if (!res.ok) throw new Error('Slider endpoint not found on server');
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
+        } catch (err) {
+            console.error('API Fetch slider failed: ', err);
+            return [];
+        } finally {
+            this.showLoader(false);
+        }
     }
 
-    getLocalMovie(id) {
-        const movies = this.getLocalMovies();
-        return movies.find(m => m.id === id) || null;
+    /**
+     * Creates a new slider record
+     * POST /slider  body: { url, image }
+     */
+    async createSlider(slideData) {
+        this.showLoader(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/slider`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(slideData)
+            });
+            if (!res.ok) throw new Error('Failed to create slider on server');
+            return true;
+        } catch (err) {
+            console.error('API Create slider failed: ', err);
+            throw err;
+        } finally {
+            this.showLoader(false);
+        }
     }
 
-    addLocalMovie(movie) {
-        const movies = this.getLocalMovies();
-        const maxId = movies.reduce((max, m) => m.id > max ? m.id : max, 0);
-        const newMovie = {
-            ...movie,
-            id: maxId + 1
-        };
-        movies.push(newMovie);
-        localStorage.setItem(LOCAL_MOVIES_KEY, JSON.stringify(movies));
-        return newMovie;
+    /**
+     * Updates an existing slider record by ID
+     * PUT /slider/{id}  body: { url, image }
+     */
+    async updateSlider(id, slideData) {
+        this.showLoader(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/slider/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(slideData)
+            });
+            if (!res.ok) throw new Error('Failed to update slider on server');
+            return true;
+        } catch (err) {
+            console.error(`API Update slider failed for ID ${id}: `, err);
+            throw err;
+        } finally {
+            this.showLoader(false);
+        }
     }
 
-    updateLocalMovie(id, data) {
-        const movies = this.getLocalMovies();
-        const index = movies.findIndex(m => m.id === id);
-        if (index === -1) throw new Error(`Movie with ID ${id} not found locally.`);
-        
-        movies[index] = {
-            ...data,
-            id: id // Ensure ID doesn't change
-        };
-        localStorage.setItem(LOCAL_MOVIES_KEY, JSON.stringify(movies));
-        return movies[index];
-    }
-
-    deleteLocalMovie(id) {
-        const movies = this.getLocalMovies();
-        const filtered = movies.filter(m => m.id !== id);
-        localStorage.setItem(LOCAL_MOVIES_KEY, JSON.stringify(filtered));
-        return true;
+    /**
+     * Deletes a slider record by ID
+     * DELETE /slider/{id}
+     */
+    async deleteSlider(id) {
+        this.showLoader(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/slider/${id}`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) throw new Error('Failed to delete slider on server');
+            return true;
+        } catch (err) {
+            console.error(`API Delete slider failed for ID ${id}: `, err);
+            throw err;
+        } finally {
+            this.showLoader(false);
+        }
     }
 }
 

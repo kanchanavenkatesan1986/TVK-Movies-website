@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Movies Admin - Slider Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/movies.css">
+    
+    <!-- Auth Guard - Executes in head to lock page render if unauthorized -->
+    <script src="../js/auth.js"></script>
+
+    <style>
+        /* Custom overrides for slider page */
+        .slider-img-preview {
+            width: 120px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        
+        tr:hover .slider-img-preview {
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .url-cell {
+            font-family: monospace;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .url-cell a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .url-cell a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .slide-limit-info {
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-limit-info.success-limit {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .slide-limit-info svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .form-group-custom {
+            margin-bottom: 20px;
+        }
+
+        .form-input-custom {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: all 0.25s ease;
+            margin-top: 6px;
+        }
+
+        .form-input-custom:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 12px var(--input-focus-glow);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .preview-box {
+            width: 100%;
+            height: 160px;
+            border-radius: 12px;
+            border: 1.5px dashed var(--card-border);
+            background: rgba(255,255,255,0.01);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .preview-box .placeholder-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Page Loading Overlay -->
+    <div id="global-loader" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-wrapper">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21,6H3V5H21V6M21,18H3V19H21V18M18,9H6V15H18V9M8,11H10V13H8V11M14,11H16V13H14V11Z" />
+                    </svg>
+                </div>
+                <span class="brand-text">TVK Movies</span>
+            </div>
+            
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M13,3V9H21V3H13M13,21H21V11H13V21M3,21H11V15H3V21M3,13H11V3H3V13Z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="movies.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M18,9H16V7H18M18,13H16V11H18M18,17H16V15H18M8,9H6V7H8M8,13H6V11H8M8,17H6V15H8M12,9H10V7H12M12,13H10V11H12M12,17H10V15H12M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4Z"/>
+                        </svg>
+                        <span>Movies List</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add-movie.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        <span>Add Movie</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="slider.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4,6H20V18H4M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4M18,12L12,7V11H8V13H12V17L18,12Z"/>
+                        </svg>
+                        <span>Manage Slider</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.47,5.34 14.86,5.08L14.49,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.51,2.42L9.14,5.08C8.53,5.34 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.95C7.96,18.34 8.53,18.66 9.14,18.92L9.51,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.49,21.58L14.86,18.92C15.47,18.66 16.04,18.34 16.56,17.95L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <li class="nav-item" style="list-style:none">
+                    <a href="#" id="sidebar-logout">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z"/>
+                        </svg>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </div>
+        </aside>
+
+        <!-- MAIN DISPLAY PANEL -->
+        <main class="main-panel">
+            
+            <!-- PANEL HEADER -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle-btn" aria-label="Toggle Sidebar Navigation">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"/>
+                        </svg>
+                    </button>
+                    <h2 class="page-title">Manage Application Slider</h2>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="avatar-letters">AD</div>
+                        <div class="user-info">
+                            <span class="user-name" id="profile-name">Admin User</span>
+                            <span class="user-role">Super Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- MAIN SCROLL AREA -->
+            <div class="content-body">
+                
+                <!-- TOP CONTROLS & INFO -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+                    <div id="slider-limit-indicator" class="slide-limit-info">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M11,9H13V11H11V9M11,13H13V17H11V13M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>
+                        </svg>
+                        <span id="slider-limit-text">Loading slides capacity status...</span>
+                    </div>
+
+                    <button class="btn btn-primary" id="add-slide-trigger">
+                        <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                        </svg>
+                        <span>Add Slide</span>
+                    </button>
+                </div>
+
+                <!-- SLIDER TABLE CARD -->
+                <div class="movies-table-card glass-container">
+                    <div class="table-responsive">
+                        <table class="movies-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">Order</th>
+                                    <th>Slide Image</th>
+                                    <th>Image Link Source</th>
+                                    <th>Click Go URL</th>
+                                    <th style="text-align: center; width: 120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slider-rows">
+                                <tr>
+                                    <td colspan="5" style="text-align:center;color:var(--text-muted);padding:50px 0;">
+                                        Retrieving slider list...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ADD/EDIT SLIDE MODAL -->
+    <div class="modal-overlay" id="slide-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title-text">Add New Slide</h3>
+                <button class="modal-close" onclick="closeModal('slide-modal')">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="slide-form" novalidate>
+                    <input type="hidden" id="slide-index">
+                    
+                    <div class="form-group-custom">
+                        <label class="form-label" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; color: var(--text-muted);" for="slide-image-input">Slide Image URL</label>
+                        <input type="text" class="form-input-custom" id="slide-image-input" placeholder="e.g. ./src/Slide-Img/myimage.webp or https://site.com/image.jpg" required>
+                        <div class="preview-box">
+                            <span class="placeholder-text" id="preview-placeholder">Live Image Preview</span>
+                            <img id="image-live-preview" src="" alt="Slide Preview">
+                        </div>
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label class="form-label" style="font-weight: 600; text-transform: uppercase; font-size: 0.75rem; color: var(--text-muted);" for="slide-link-input">Click Go URL (Destination)</label>
+                        <input type="url" class="form-input-custom" id="slide-link-input" placeholder="https://tvkmovies.kanchanavenkatesan1986.workers.dev/watch?reward=..." required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('slide-modal')">Cancel</button>
+                <button class="btn btn-primary" id="save-slide-btn">Save Slide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-body">
+                <div class="confirm-body">
+                    <div class="confirm-icon-wrap">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="confirm-title">Remove Slide?</h3>
+                    <p class="confirm-desc">Are you sure you want to remove slide <span id="delete-slide-num" style="color:var(--primary); font-weight:700;">#</span> from the home page rotation?</p>
+                </div>
+            </div>
+            <div class="modal-footer" style="background: none; border-top: none; justify-content: center; padding-bottom: 24px;">
+                <button class="btn btn-secondary" onclick="closeModal('delete-modal')" style="min-width: 100px;">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn" style="min-width: 100px;">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/slider.js"></script>
+
+    <!-- Run active Theme loader on load before rendering orbs -->
+    <script>
+        (function() {
+            const cachedTheme = localStorage.getItem('tvk_glow_theme') || 'violet';
+            const map = {
+                violet: { p: '#8b5cf6', a: '#06b6d4' },
+                cyan: { p: '#06b6d4', a: '#10b981' },
+                emerald: { p: '#10b981', a: '#f59e0b' },
+                rose: { p: '#f43f5e', a: '#8b5cf6' }
+            };
+            const theme = map[cachedTheme];
+            if (theme) {
+                document.documentElement.style.setProperty('--primary', theme.p);
+                document.documentElement.style.setProperty('--primary-glow', theme.p + '66');
+                document.documentElement.style.setProperty('--accent', theme.a);
+                document.documentElement.style.setProperty('--accent-glow', theme.a + '4D');
+            }
+        })();
+    </script>
+</body>
+</html>

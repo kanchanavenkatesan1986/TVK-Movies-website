@@ -271,7 +271,7 @@
 
     let index = 0;
 
-fetch("data_json/slider.json")
+fetch("https://database.kanchanavenkatesan1986.workers.dev/slider")
 .then(res => res.json())
 .then(data => {
 
@@ -281,7 +281,7 @@ const dotContainer = document.getElementById("dot");
 data.forEach((item,i)=>{
 
 slidesContainer.innerHTML += `
-<a href="${item.link}">
+<a href="${item.url}">
 <div class="slides">
 <img class="imggg" src="${item.image}">
 </div>
