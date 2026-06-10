@@ -4,7 +4,7 @@
  * https://database.kanchanavenkatesan1986.workers.dev
  */
 
-const API_BASE_URL = 'https://database.teamakatsuki.workers.dev';
+const API_BASE_URL = 'https://database.akatsuki-pvt-ltd.workers.dev';
 const API_MODE_KEY = 'tvk_api_mode'; // 'live' or 'local'
 const LOCAL_MOVIES_KEY = 'tvk_local_movies';
 
