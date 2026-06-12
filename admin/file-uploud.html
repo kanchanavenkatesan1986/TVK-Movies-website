@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare R2 Uploader</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:500px;
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:25px;
+    color:#1e293b;
+}
+
+label{
+    font-weight:600;
+    color:#475569;
+}
+
+#folder{
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    font-size:15px;
+    outline:none;
+}
+
+#folder:focus{
+    border-color:#3b82f6;
+}
+
+.upload-box{
+    margin-top:20px;
+    border:2px dashed #3b82f6;
+    border-radius:15px;
+    text-align:center;
+    padding:50px 20px;
+    cursor:pointer;
+    background:#f8fafc;
+    transition:.3s;
+}
+
+.upload-box:hover{
+    background:#eff6ff;
+}
+
+.upload-box h3{
+    color:#1e293b;
+}
+
+.upload-box p{
+    color:#64748b;
+    margin-top:10px;
+}
+
+#fileInput{
+    display:none;
+}
+
+#status{
+    margin-top:20px;
+    text-align:center;
+    font-weight:600;
+    color:#16a34a;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>☁ Cloudflare R2 Uploader</h2>
+
+    <label>Folder Path</label>
+
+    <input
+    type="text"
+    id="folder"
+    placeholder="Hollywood/2019/Avengers-Endgame">
+
+    <div class="upload-box" onclick="fileInput.click()">
+
+        <h3>📁 Select Files</h3>
+
+        <p>Click here to choose files</p>
+
+    </div>
+
+    <input
+    type="file"
+    id="fileInput"
+    multiple>
+
+    <div id="status"></div>
+
+</div>
+
+<script>
+
+const workerURL =
+"https://tvk-file.akatsuki-pvt-ltd.workers.dev/";
+
+const fileInput =
+document.getElementById("fileInput");
+
+const status =
+document.getElementById("status");
+
+fileInput.addEventListener(
+"change",
+async function(){
+
+const folder =
+document.getElementById("folder").value;
+
+for(const file of this.files){
+
+status.innerHTML =
+"Uploading " + file.name + "...";
+
+const formData =
+new FormData();
+
+formData.append(
+"file",
+file
+);
+
+formData.append(
+"folder",
+folder
+);
+
+await fetch(
+workerURL,
+{
+method:"POST",
+body:formData
+}
+);
+
+}
+
+status.innerHTML =
+"✅ Upload Complete";
+
+});
+
+</script>
+
+</body>
+</html>
