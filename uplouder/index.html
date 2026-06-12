@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akatsuki Cloud Uploader - Cloudflare R2 Multipart Uploader</title>
+  <meta name="description" content="A premium, high-performance, resumable multipart uploader for Cloudflare R2 bucket tvk-movies. Supports files from 2 GB to 100 GB+ with speed tracking, parallel uploads, and session restoration.">
+  
+  <!-- Fonts and Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <a href="#" class="logo" id="logo-main">
+          <div class="logo-icon">R2</div>
+          <div class="logo-text">
+            <h1>Akatsuki Cloud</h1>
+            <span>R2 Multipart Uploader</span>
+          </div>
+        </a>
+        
+        <!-- Quick Action Info -->
+        <div class="badge badge-queued" id="bucket-badge">
+          <i class="fa-solid fa-database"></i> Bucket: tvk-movies
+        </div>
+      </div>
+
+      <!-- Global Stats Dashboard -->
+      <div class="global-stats">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fa-solid fa-cloud-arrow-up" id="stat-upload-icon"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Upload Status</span>
+            <span class="stat-value" id="global-status">Idle</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Speed</span>
+            <span class="stat-value" id="global-speed">0.0 MB/s</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fa-solid fa-hourglass-half"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Time Remaining</span>
+            <span class="stat-value" id="global-eta">--:--</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Queue Progress</span>
+            <span class="stat-value" id="global-progress">0%</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Sidebar Settings & Restore -->
+      <aside class="sidebar">
+        <!-- Settings Card -->
+        <div class="card" id="settings-card">
+          <h2 class="card-title">
+            <i class="fa-solid fa-sliders"></i> Upload Settings
+          </h2>
+          
+          <div class="form-group">
+            <label for="folder-path">Default Upload Folder</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-folder-open"></i>
+              <input type="text" id="folder-path" placeholder="movies/june2026/" value="movies/">
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; padding-left: 0.25rem;">
+              Files will be saved with this prefix in R2.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="concurrency-range">Parallel Chunk Uploads</label>
+            <div class="slider-container">
+              <input type="range" id="concurrency-range" min="3" max="5" value="3" step="1">
+              <span class="slider-val" id="concurrency-val">3</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem; padding-left: 0.25rem;">
+              Simultaneous chunks uploaded per file (3–5 connections).
+            </p>
+          </div>
+        </div>
+
+        <!-- Restore Paused/Interrupted Sessions Card -->
+        <div class="restore-panel" id="restore-panel">
+          <div class="restore-header">
+            <h3 class="restore-title">
+              <i class="fa-solid fa-triangle-exclamation"></i> Resumable Uploads
+            </h3>
+            <button class="btn btn-icon btn-icon-danger" id="clear-restorables-btn" title="Clear all saved uploads">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Unfinished uploads detected from a previous session. Drag and drop the original file onto the dropzone or select it in the list to resume without losing progress.
+          </p>
+          <div class="restore-list" id="restore-list">
+            <!-- Dynamically populated in app.js -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Uploader Queue Area -->
+      <main class="queue-container">
+        <!-- Drag & Drop Zone -->
+        <div class="dropzone" id="drop-zone">
+          <div class="dropzone-glow"></div>
+          <div class="dropzone-icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <h3 class="dropzone-title">Drag & Drop files or folders here</h3>
+          <p class="dropzone-subtitle">
+            Supports large files from 2 GB up to 100 GB+. Splits files into 50 MB parts, uploaded in parallel with automatic error retries.
+          </p>
+          
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-select-files">
+              <i class="fa-solid fa-file-arrow-up"></i> Select Files
+            </button>
+            <button class="btn btn-secondary" id="btn-select-folder">
+              <i class="fa-solid fa-folder-plus"></i> Select Folder
+            </button>
+          </div>
+          
+          <!-- Hidden inputs for file/folder selection -->
+          <input type="file" id="file-input" class="file-input-hidden" multiple>
+          <input type="file" id="folder-input" class="file-input-hidden" webkitdirectory directory multiple>
+        </div>
+
+        <!-- Queue Section -->
+        <div>
+          <div class="queue-header">
+            <h2 class="queue-title">
+              Upload Queue <span id="queue-count">0</span>
+            </h2>
+            <div class="btn-row" id="queue-global-actions" style="display: none;">
+              <button class="btn btn-secondary btn-icon" id="btn-global-pause" title="Pause All">
+                <i class="fa-solid fa-pause"></i>
+              </button>
+              <button class="btn btn-secondary btn-icon" id="btn-global-resume" title="Resume All">
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <button class="btn btn-icon btn-icon-danger" id="btn-global-clear" title="Clear Queue / Abort All">
+                <i class="fa-solid fa-ban"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="queue-empty" id="queue-empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p>Your upload queue is empty. Drag some movies or files to begin uploading!</p>
+          </div>
+
+          <!-- Queue List -->
+          <div class="queue-list" id="queue-list">
+            <!-- Dynamically populated in app.js -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div id="toast-container"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
