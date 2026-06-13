@@ -4,13 +4,13 @@
  */
 
 // Constants
-const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB chunks
+const CHUNK_SIZE = 50 * 1024 * 1024; // 50 MB chunks
 const API_BASE = 'https://tvk-file.akatsuki-pvt-ltd.workers.dev';
 const STORAGE_KEY = 'r2_uploader_sessions';
 
 // State
 let uploadQueue = [];
-let maxConcurrency = 1;
+let maxConcurrency = 5;
 let globalSpeedInterval = null;
 
 // DOM Elements
@@ -798,7 +798,7 @@ function handleChunkFailure(uploadObj, partNumber, error) {
   uploadObj.chunkRetries[partNumber] = currentRetries + 1;
   uploadObj.chunkUploadedBytes[partNumber] = 0;
 
-  if (currentRetries + 1 < 5) {
+  if (currentRetries + 1 < 3) {
     uploadObj.chunkStatus[partNumber] = 'idle'; // Reset to idle for auto-retry
     showToast('Retrying Chunk', `Part ${partNumber} of "${uploadObj.name}" failed. Retrying... (${currentRetries + 1}/3)`, 'warning');
   } else {
