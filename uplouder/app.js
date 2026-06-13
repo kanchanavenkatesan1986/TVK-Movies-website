@@ -10,7 +10,7 @@ const STORAGE_KEY = 'r2_uploader_sessions';
 
 // State
 let uploadQueue = [];
-let maxConcurrency = 5;
+let maxConcurrency = 3;
 let globalSpeedInterval = null;
 
 // DOM Elements
