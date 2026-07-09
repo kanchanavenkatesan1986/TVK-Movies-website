@@ -106,7 +106,7 @@ const api = {
      * @returns {Promise<Array>}
      */
     getSlider: function() {
-        return fetch(API_BASE + "/../slider")
+        return fetch(API_BASE + "/slider")
             .then(function(res) {
                 if (!res.ok) throw new Error("Failed to fetch slider: " + res.status);
                 return res.json();
