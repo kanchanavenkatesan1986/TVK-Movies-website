@@ -1,251 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>VIP Movies</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Movies - VIP Movies</title>
 
-<link rel="stylesheet" href="./src/main.css"/>
-<script src="./src/main.js"></script>
+    <link rel="stylesheet" href="./src/main.css" />
+    <script src="./src/api.js"></script>
+    <script src="./src/main.js" defer></script>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"/>
-
-<style>
-
-    #searchInput{
-        margin: 20px 20px 0px 20px;
-        width: 940px;
-        height: 90px;
-        background-color:var(--card);
-        border: none;
-        font-size: 35px;
-        padding: 20px;
-        color: var(--text);
-    }
-
-.search-box{
-width: 940px;    
-margin:20px;
-display:flex;
-gap:20px;
-}
-
-.search-box input{
-padding:20px;
-font-size:25px;
-background:var(--sub-black);
-color:var(--text);
-border:none;
-border-radius: 10px;
-}
-
-.search-box select{
-width:460px;    
-padding:20px;
-font-size:35px;
-color: var(--text);
-background:var(--card);
-border:none;
-border-radius: 10px;
-}
-
-    .list{
-        position: relative;
-        width: 940px;
-        margin: 10px 20px 0px 20px;
-        height: 340px;
-        background-color: var(--card);
-        border-radius: 10px;
-        display: flex;
-    }
-    .sub-list{
-        width: 270px;
-        height: 340px;
-        padding: 10px;
-    }
-    .title-img{
-        width: 250px;
-        height: 320px;
-        border-radius: 10px;
-    }
-    .data-list{
-        width: 520px;
-        height: 340px;
-        padding: 20px;
-    }
-    .head{
-        font-size: 40px;
-        padding: 0px 0px 10px 0px;
-        color: var(--text);
-    }
-    .release{
-        font-size: 25px;
-        padding: 10px;
-        padding-left: 0px;
-        color: var(--sub-text);
-    }
-    .language{
-        font-size: 25px;
-        padding: 10px;
-        padding-left: 0px;
-        color: var(--sub-text);
-    }
-    .year{
-        position: absolute;
-        right: 20px;
-        top: 20px;
-        text-align: center;
-        padding: 5px 20px;
-        font-size: 25px;
-        border: solid 5px var(--main-theme);
-        color: var(--main-theme);
-        border-radius: 10px;
-    }
-    .ads{
-        position: absolute;
-        right: 20px;
-        bottom: 20px;
-        font-size: 30px;
-        color: rgb(51, 255, 0);
-    }
-    .not-box{
-        width: 980px;
-        padding: 30px;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-        color: red;
-    }
-
-</style>
-
+    <!-- Lexend Font & FontAwesome Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
 <body>
 
-<div class="main">
+    <div class="main">
 
+        <!-- Navigation Drawer (Overlay) -->
+        <div id="myNav" class="overlay">
+            <img src="./m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+            <img src="./m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
 
-<!-- SEARCH -->
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="sub-pages/feedback.html" class="nav-link">
+                    <i class="fa-solid fa-comment-dots"></i> Feedback
+                </a>
+                <a href="sub-pages/about.html" class="nav-link">
+                    <i class="fa-solid fa-circle-info"></i> About
+                </a>
+                <a href="setting.html" class="nav-link">
+                    <i class="fa-solid fa-gear"></i> Setting
+                </a>
+            </div>
+        </div>
 
+        <!-- Header -->
+        <div class="header">
+            <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+            <img src="./m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='index.html'"
+                style="cursor:pointer;">
+            <a href="index.html"
+                style="display: flex; align-items: center; justify-content: center; width: 28px; height: 28px;">
+                <i class="fa-solid fa-house" style="font-size: 20px; color: var(--text-primary); opacity: 0.85;"></i>
+            </a>
+        </div>
 
-<input type="text" id="searchInput" placeholder="Search movie...">
+        <!-- SEARCH INPUTS -->
+        <input type="text" id="searchInput" placeholder="Search movie by title...">
 
-<div class="search-box">
+        <div class="search-box">
+            <select id="yearFilter">
+                <option value="">All Years</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+            </select>
 
-<select id="yearFilter">
-<option value="">All Year</option>
-<option value="2026">2026</option>
-<option value="2025">2025</option>
-<option value="2024">2024</option>
-</select>
+            <select id="langFilter">
+                <option value="">All Types</option>
+                <option value="tamil">Tamil</option>
+                <option value="hollywood">Hollywood</option>
+            </select>
+        </div>
 
-<select id="langFilter">
-<option value="">All Language</option>
-<option value="Tamil">Tamil</option>
-<option value="Hollywood">Hollywood</option>
-</select>
+        <!-- MOVIE GRID -->
+        <div id="movieList" class="movies-grid"></div>
 
-</div>
+        <!-- Movie Not Available Message -->
+        <div id="notAvailable" class="not-box" style="display: none;">
+            <i class="fa-solid fa-film"></i>
+            <h1 class="note">Movie Not Available...</h1>
+        </div>
 
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <a href="index.html" class="bottom-nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="search.html" class="bottom-nav-item">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search</span>
+            </a>
+            <a href="years.html" class="bottom-nav-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Years</span>
+            </a>
+            <a href="filter.html" class="bottom-nav-item">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Filter</span>
+            </a>
+            <a href="setting.html" class="bottom-nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Setting</span>
+            </a>
+        </div>
 
-<div id="movieList"></div>
-
-<div class="not-box">
-        <h1 class="note">Movie Not Avalible...</h1>
     </div>
 
-</div>
+    <script>
+        var allMovies = [];
 
+        api.getAllMovies()
+            .then(function (data) {
+                allMovies = data;
+                displayMovies(allMovies);
+            })
+            .catch(function (err) {
+                console.error("Error loading movies:", err);
+                document.getElementById("notAvailable").style.display = "flex";
+            });
 
-<script>
+        function displayMovies(movies) {
+            var container = document.getElementById("movieList");
+            var notAvailable = document.getElementById("notAvailable");
 
-let allMovies=[]
+            container.innerHTML = "";
 
-fetch("https://database.akatsuki-pvt-ltd.workers.dev/movies")
-.then(res=>res.json())
-.then(data=>{
+            if (movies.length === 0) {
+                notAvailable.style.display = "flex";
+                return;
+            }
 
-allMovies=data
+            notAvailable.style.display = "none";
 
-displayMovies(allMovies)
+            // Sort movies: active first, coming soon last
+            movies.sort(function (a, b) {
+                var aComing = (a.status || "").toLowerCase() === "coming soon" ? 1 : 0;
+                var bComing = (b.status || "").toLowerCase() === "coming soon" ? 1 : 0;
+                return aComing - bComing;
+            });
 
-})
+            movies.forEach(function (movie) {
+                var isComingSoon = movie.status && movie.status.toLowerCase() === "coming soon";
+                var card = document.createElement("a");
+                var movieType = (movie.type || "").toLowerCase();
+                var movieYear = movie.year || "";
+                card.href = "watch.html?type=" + movieType + "&year=" + movieYear + "&id=" + movie.id;
+                card.className = "list-card-link";
 
-function displayMovies(movies){
+                if (isComingSoon) {
+                    card.style.opacity = "0.45";
+                    card.style.filter = "grayscale(60%)";
+                }
 
-const container=document.getElementById("movieList")
+                card.innerHTML =
+                    '<div class="list-card">' +
+                    '<div class="list-card-img-wrapper">' +
+                    '<img class="list-card-img" src="./src/images/' + movieType + '/' + movieYear + '/' + movie.image + '" alt="' + movie.title + '" loading="lazy">' +
+                    '<span class="list-card-badge">' + (movie.year || '-') + '</span>' +
+                    (isComingSoon ? '<span class="coming-soon-badge">Coming Soon</span>' : '') +
+                    '</div>' +
+                    '<div class="list-card-details">' +
+                    '<h3 class="list-card-title">' + movie.title + '</h3>' +
+                    '<p class="list-card-info">Language: ' + (movie.language || '-') + '</p>' +
+                    '<p class="list-card-info">Release: ' + (movie.release || '-') + '</p>' +
+                    '<div class="list-card-action">' +
+                    '<i class="fa-solid fa-circle-play"></i> Watch Ads - Unlock' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
 
-container.innerHTML=""
+                container.appendChild(card);
+            });
+        }
 
-movies.forEach(movie=>{
+        document.getElementById("searchInput").addEventListener("input", filterMovies);
+        document.getElementById("yearFilter").addEventListener("change", filterMovies);
+        document.getElementById("langFilter").addEventListener("change", filterMovies);
 
-const card=document.createElement("a")
+        function filterMovies() {
+            var search = document.getElementById("searchInput").value.toLowerCase();
+            var year = document.getElementById("yearFilter").value;
+            var typeFilter = document.getElementById("langFilter").value.toLowerCase();
 
-card.href="watch.html?reward="+movie.id
+            var filtered = allMovies.filter(function (movie) {
+                var matchesSearch = movie.title.toLowerCase().includes(search);
+                var matchesYear = (year === "" || movie.year == year);
+                var matchesType = (typeFilter === "" || (movie.type || "").toLowerCase() === typeFilter);
+                return matchesSearch && matchesYear && matchesType;
+            });
 
-card.innerHTML=`
+            displayMovies(filtered);
+        }
+    </script>
 
-<div class="list">
+    <style>
+        .list-card-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            top: auto;
+            right: auto;
+        }
 
-<div class="sub-list">
-<img class="title-img" src="${movie.image}">
-</div>
+        .coming-soon-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ff0040, #c2003b);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 3;
+            box-shadow: 0 0 10px rgba(255, 0, 64, 0.7), 0 2px 8px rgba(0, 0, 0, 0.4);
+            animation: cs-pulse 1.8s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
 
-<div class="data-list">
+        @keyframes cs-pulse {
 
-<h1 class="head">${movie.title}</h1>
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(255, 0, 64, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+            }
 
-<h3 class="year">${movie.year}</h3>
+            50% {
+                box-shadow: 0 0 18px rgba(255, 0, 64, 1), 0 2px 8px rgba(0, 0, 0, 0.4);
+            }
+        }
+    </style>
 
-<h2 class="release">Release : ${movie.release}</h2>
-
-<h2 class="language">Language : ${movie.language}</h2>
-
-<h3 class="ads">Watch Ads - Unlock ➜</h3>
-
-</div>
-
-</div>
-
-`
-
-container.appendChild(card)
-
-})
-
-}
-
-
-document.getElementById("searchInput").addEventListener("input",filterMovies)
-document.getElementById("yearFilter").addEventListener("change",filterMovies)
-document.getElementById("langFilter").addEventListener("change",filterMovies)
-
-
-function filterMovies(){
-
-const search=document.getElementById("searchInput").value.toLowerCase()
-const year=document.getElementById("yearFilter").value
-const lang=document.getElementById("langFilter").value.toLowerCase()
-
-const filtered=allMovies.filter(movie=>
-
-movie.title.toLowerCase().includes(search) &&
-
-(year==="" || movie.year==year) &&
-
-(lang==="" || movie.category.toLowerCase().includes(lang))
-
-)
-
-displayMovies(filtered)
-
-}
-
-</script>
-
-<!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'>
-</script><!-- End Cloudflare Web Analytics -->
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script>
+    <!-- End Cloudflare Web Analytics -->
 
 </body>
+
 </html>

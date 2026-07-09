@@ -1,221 +1,235 @@
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>About</title>
-    <link rel="stylesheet"  href="./index.css" />
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=NATS:wght@400&display=swap" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - VIP Movies</title>
+    
+    <link rel="stylesheet" href="../src/main.css" />
+    <script src="../src/main.js" defer></script>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        .about-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .about-title {
+            font-size: clamp(24px, 4vw, 32px);
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .about-card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 28px 0 12px 0;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .about-card h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background-color: var(--accent);
+        }
+
+        .about-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .about-list {
+            list-style: none;
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .about-list li {
+            font-size: 14px;
+            color: #67e8f9; /* Soft cyan color */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .about-list li i {
+            color: var(--accent);
+            font-size: 12px;
+        }
+
+        .contact-box {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-box a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .contact-box a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .about-footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 40px 0 10px 0;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 
-<div id="myNav" class="overla">
-    <img id="close" onclick="closeNav()" src="../m-image/Close icon.png"/>
-    <img id="navimg" src="../m-image/VIP Movies.jpg"/>
-    <a href="/index.html"><img id="navb" src="../m-image/N-Home.png"/></a>
-    <a href="/sub-pages/feedback.html"><img id="navb" src="../m-image/N-feedback.png"/></a>
-    <a href="/sub-pages/about.html"><img id="navb" src="../m-image/N-about.png"/></a>
-  </div>
+<body>
 
-<body style="background-color: rgb(0, 0, 0); width: 980px;">
+<div class="main">
 
-    <div style="position: relative; background-color: rgb(0, 0, 0); height: 110px; width: 980px;">
-        <img id="menu" onclick="openNav()" src="../m-image/Menu icon.png"/>
-        <img id="title" src="../m-image/Vip Title.png"/>
-        <a href="./search.html"><img id="search" src="../m-image/Search icon.png"/></a>
+    <!-- Navigation Drawer (Overlay) -->
+    <div id="myNav" class="overlay">
+        <img src="../m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+        <img src="../m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
+        
+        <div class="nav-menu">
+            <a href="../index.html" class="nav-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="feedback.html" class="nav-link">
+                <i class="fa-solid fa-comment-dots"></i> Feedback
+            </a>
+            <a href="about.html" class="nav-link">
+                <i class="fa-solid fa-circle-info"></i> About
+            </a>
+        </div>
     </div>
-    
-<!-- PAGE CONTENT -->
-<div style="width:900px; background:#111;padding: 40px; border-radius:20px;">
 
-<h1 style="font-size:40px; margin-bottom:25px; color:rgba(246, 255, 0, 1);">About TVK Movies</h1>
+    <!-- Header -->
+    <div class="header">
+        <img src="../m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+        <img src="../m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='../index.html'" style="cursor:pointer;">
+        <a href="../search.html">
+            <img src="../m-image/Search icon.png" class="search" alt="Search">
+        </a>
+    </div>
 
-<p style="line-height:1.6;">
-TVK Movies – Vintage Cinema is a digital collection of classic films that are legally available in the public domain.
-Our mission is to preserve and provide access to historical cinema for educational and entertainment purposes.
-</p>
+    <!-- PAGE CONTENT -->
+    <div class="about-card">
+        <h1 class="about-title">About TVK Movies</h1>
+        
+        <p>
+            TVK Movies – Vintage Cinema is a digital collection of classic films that are legally available in the public domain. 
+            Our mission is to preserve and provide access to historical cinema for educational, archival, and entertainment purposes.
+        </p>
 
-<br><br>
+        <h2>Public Domain Policy</h2>
+        <p>
+            All movies featured in this app/website are verified to be in the public domain. Public domain works are films whose copyrights have expired or were released into the public domain under applicable laws. These works are legally free to watch, distribute, and share.
+        </p>
 
-<h2>Public Domain Policy</h2>
+        <h2>Content Source & Attribution</h2>
+        <p>
+            Movie content is sourced from trusted public archives such as:
+        </p>
+        
+        <ul class="about-list">
+            <li><i class="fa-solid fa-circle"></i> Internet Archive (archive.org)</li>
+            <li><i class="fa-solid fa-circle"></i> Wikimedia Commons</li>
+            <li><i class="fa-solid fa-circle"></i> Other verified public domain repositories</li>
+        </ul>
 
-<p style=" line-height:1.6;">
-All movies featured in this app/website are verified to be in the public domain.
-Public domain works are films whose copyrights have expired or were released into the public domain under applicable laws.
-These works are legally free to watch, distribute, and share.
-</p>
+        <p>
+            Each movie is clearly marked as Public Domain on its respective archive page. TVK Movies does not modify or claim ownership of any film content.
+        </p>
 
-<br>
+        <h2>No Hosting Disclaimer</h2>
+        <p>
+            TVK Movies does not host, upload, or store any video files on its servers. All streaming links redirect users to official external public archives.
+        </p>
 
-<h2>Content Source & Attribution</h2>
+        <h2>Copyright & DMCA Notice</h2>
+        <p>
+            If you are a copyright owner and believe that any material has been included in error, please contact us with proper documentation. We will review and remove the content promptly if necessary.
+        </p>
 
-<p style=" line-height:1.6;">
-Movie content is sourced from trusted public archives such as:
-</p>
+        <h2>Educational Purpose</h2>
+        <p>
+            This platform is intended for educational, historical, and entertainment purposes. We aim to promote appreciation of classic cinema and film history.
+        </p>
 
-<ul style=" margin-left:20px; line-height:1.8;color: rgba(0, 247, 255, 0.796);font-size: 30px;">
-<li>Internet Archive (archive.org)</li>
-<li>Wikimedia Commons</li>
-<li>Other verified public domain repositories</li>
-</ul>
+        <h2>Contact Information</h2>
+        <p>
+            For copyright concerns, corrections, or general inquiries:
+        </p>
+        
+        <div class="contact-box">
+            <i class="fa-solid fa-envelope" style="color: var(--accent); font-size: 18px;"></i>
+            <span>Email: <a href="mailto:kanchanavenkatasen1986@email.com">kanchanavenkatasen1986@email.com</a></span>
+        </div>
+    </div>
 
-<p style="line-height:1.6;">
-Each movie is clearly marked as Public Domain on its respective archive page.
-TVK Movies does not modify or claim ownership of any film content.
-</p>
+    <!-- FOOTER -->
+    <div class="about-footer">
+        © 2026 TVK Movies – Vintage Cinema<br>
+        All content is sourced from public domain archives.
+    </div>
 
-<br>
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="../index.html" class="bottom-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="../search.html" class="bottom-nav-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </a>
+        <a href="../years.html" class="bottom-nav-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Years</span>
+        </a>
+        <a href="../filter.html" class="bottom-nav-item">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Filter</span>
+        </a>
+        <a href="../setting.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
 
-<h2>No Hosting Disclaimer</h2>
-
-<p style="line-height:1.6;">
-TVK Movies does not host, upload, or store any video files.
-All streaming links redirect users to official external public archives.
-</p>
-
-<br>
-
-<h2>Copyright & DMCA Notice</h2>
-
-<p style=" line-height:1.6;">
-If you are a copyright owner and believe that any material has been included in error,
-please contact us with proper documentation.
-We will review and remove the content promptly if necessary.
-</p>
-
-<br>
-
-<h2>Educational Purpose</h2>
-
-<p style=" line-height:1.6;">
-This platform is intended for educational, historical, and entertainment purposes.
-We aim to promote appreciation of classic cinema and film history.
-</p>
-
-<br>
-
-<h2>Contact Information</h2>
-
-<p style=" line-height:1.6;">
-For copyright concerns, corrections, or general inquiries:<br><br>
-📧 Email: kanchanavenkatasen1986@email.com
-</p>
-
-</div>
-
-<!-- FOOTER -->
-<div style="text-align:center;color:gray; margin:40px 0;">
-© 2026 TVK Movies – Vintage Cinema<br>
-All content is sourced from public domain archives.
 </div>
 
 <!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'>
-</script><!-- End Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script>
+<!-- End Cloudflare Web Analytics -->
 
 </body>
-    
-<style>
-    h2{
-        padding: 20px;
-        font-size: 35px;
-        color: rgba(246, 255, 0, 1);
-    }
-    p{
-        color: #ffffff;
-        padding: 10px;
-        font-size: 25px;
-    }
-
-    body {
-  font-family: 'Lato', sans-serif;
-}
-
-.overla {
-  height: 100%;
-  width: 0%;
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  background-color: rgb(16, 16, 19);
-  overflow-x: hidden;
-  transition: 0.5s;
-}
-
-.overla a {
-  padding: 8px;
-  text-decoration: none;
-  font-size: 36px;
-  color: #ffffff;
-  display: block;
-  transition: 0.3s;
-}
-#close{
-    position: absolute; 
-    width: 70px;
-    top: 20px;
-    left: 20px;
-}
-
-
-
-    *{
-        padding: 0%;
-        margin: 0%;
-        text-decoration: none;
-    }
-    #navimg{
-        position: absolute;
-        top: 100px;
-        width: 420px;
-        height: 420px;
-        left: 20px;
-        border-radius: 5px;
-        z-index: 10;
-    }
-    #navb{
-        position: relative;
-        width: 420px;
-        height: 90px;
-        left: 20px;
-        top: 530px;
-        margin-bottom:-17px;
-        z-index: 10;
-        
-        
-    }
-    #menu{
-        position: absolute;
-        width: 70px;
-        height: 70px;
-        top: 20px;
-        left: 20px;
-    }
-    #title{
-        position: absolute;
-        width: 300px;
-        top: 15px;
-        left: 340px;
-    }
-    #search{
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        top: 23px;
-        right: 23px;
-    }
-
-</style>
-
-<script>
-    function openNav() {
-      document.getElementById("myNav").style.width = "460px";
-    }
-    
-    function closeNav() {
-      document.getElementById("myNav").style.width = "0%";
-    }
-    </script>
-
 </html>

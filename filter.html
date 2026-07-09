@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Releases - VIP Movies</title>
+
+    <link rel="stylesheet" href="./src/main.css" />
+    <script src="./src/api.js"></script>
+    <script src="./src/main.js" defer></script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script><!-- End Cloudflare Web Analytics -->
+
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        .releases-hero {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.06) 0%, var(--bg-secondary) 100%);
+            border: 1px solid rgba(0, 230, 118, 0.1);
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .releases-hero h1 {
+            font-size: clamp(20px, 4vw, 28px);
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 6px;
+        }
+
+        .releases-hero p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .release-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 2px;
+        }
+
+        .release-stats::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px 12px;
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--card-radius);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .stat-card .stat-number {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-card .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .timeline-label i {
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        /* ── Filter Dropdown Panel ── */
+        .filter-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .filter-select-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-select-wrap label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding-left: 2px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'Lexend', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(245, 197, 24, 0.15);
+        }
+
+        .filter-select option {
+            background-color: #1a1a2e;
+            color: var(--text-primary);
+        }
+
+        .filter-apply-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+            border: none;
+            border-radius: 12px;
+            color: #050507;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Lexend', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.18s, box-shadow 0.18s;
+            box-shadow: 0 4px 16px rgba(245, 197, 24, 0.25);
+        }
+
+        .filter-apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(245, 197, 24, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .filter-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .filter-select-wrap:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main">
+
+        <!-- Navigation Drawer (Overlay) -->
+        <div id="myNav" class="overlay">
+            <img src="./m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+            <img src="./m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
+
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="sub-pages/feedback.html" class="nav-link">
+                    <i class="fa-solid fa-comment-dots"></i> Feedback
+                </a>
+                <a href="sub-pages/about.html" class="nav-link">
+                    <i class="fa-solid fa-circle-info"></i> About
+                </a>
+                <a href="setting.html" class="nav-link">
+                    <i class="fa-solid fa-gear"></i> Setting
+                </a>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+            <img src="./m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='index.html'"
+                style="cursor:pointer;">
+            <a href="search.html">
+                <img src="./m-image/Search icon.png" class="search" alt="Search">
+            </a>
+        </div>
+
+        <!-- New Releases Hero -->
+        <div class="releases-hero">
+            <h1><i class="fa-solid fa-bolt" style="margin-right:6px;"></i>Filter Movies</h1>
+            <p>Fresh additions to our library – watch before anyone else</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="release-stats">
+            <div class="stat-card">
+                <span class="stat-number" id="totalCount">—</span>
+                <span class="stat-label">Total Movies</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="tamilCount">—</span>
+                <span class="stat-label">Tamil</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="hwCount">—</span>
+                <span class="stat-label">Hollywood</span>
+            </div>
+        </div>
+
+        <!-- Filter Dropdowns -->
+        <div class="filter-panel">
+            <div class="filter-row">
+                <div class="filter-select-wrap">
+                    <label for="selType">Type</label>
+                    <select id="selType" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="tamil">Tamil</option>
+                        <option value="hollywood">Hollywood</option>
+                    </select>
+                </div>
+                <div class="filter-select-wrap">
+                    <label for="selYear">Year</label>
+                    <select id="selYear" class="filter-select">
+                        <option value="">All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+                <div class="filter-select-wrap">
+                    <label for="selCategory">Category</label>
+                    <select id="selCategory" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Animation">Animation</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Crime">Crime</option>
+                        <option value="Documentary">Documentary</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Family">Family</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="History">History</option>
+                        <option value="Horror">Horror</option>
+                        <option value="Kids">Kids</option>
+                        <option value="Music">Music</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Reality">Reality</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Soap">Soap</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="War">War</option>
+                    </select>
+                </div>
+            </div>
+            <button class="filter-apply-btn" onclick="applyDropdownFilter()">
+                <i class="fa-solid fa-magnifying-glass"></i> Apply Filter
+            </button>
+        </div>
+
+        <!-- Timeline Label -->
+        <div class="timeline-label">
+            <i class="fa-solid fa-clock"></i>
+            <span id="timelineText">Recently Added</span>
+            <span id="resultCount" style="margin-left: auto; font-size: 12px; color: var(--accent); font-weight: 700; background-color: rgba(245, 197, 24, 0.1); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(245, 197, 24, 0.25);"></span>
+        </div>
+
+        <!-- New Releases Grid -->
+        <div id="releasesGrid" class="movies-grid"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="not-box" style="display: none;">
+            <i class="fa-solid fa-bolt" style="font-size: 38px; color: var(--success); margin-bottom: 16px;"></i>
+            <h1 class="note">Loading new releases...</h1>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="index.html" class="bottom-nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="search.html" class="bottom-nav-item">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search</span>
+            </a>
+            <a href="years.html" class="bottom-nav-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Years</span>
+            </a>
+            <a href="filter.html" class="bottom-nav-item active">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Filter</span>
+            </a>
+            <a href="setting.html" class="bottom-nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Setting</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        var allMovies = [];
+
+        api.getAllMovies()
+            .then(function (data) {
+                allMovies = data;
+
+                // Stats
+                document.getElementById("totalCount").textContent = data.length;
+                document.getElementById("tamilCount").textContent = data.filter(function (m) {
+                    return (m.type || "").toLowerCase() === "tamil";
+                }).length;
+                document.getElementById("hwCount").textContent = data.filter(function (m) {
+                    return (m.type || "").toLowerCase() === "hollywood";
+                }).length;
+
+                renderReleases(data);
+            })
+            .catch(function (err) {
+                console.error("Error loading releases:", err);
+                document.getElementById("emptyState").style.display = "flex";
+            });
+
+        function applyDropdownFilter() {
+            var selType     = document.getElementById('selType').value.toLowerCase();
+            var selYear     = document.getElementById('selYear').value;
+            var selCategory = document.getElementById('selCategory').value.toLowerCase();
+
+            var movies = allMovies.slice();
+
+            if (selType) {
+                movies = movies.filter(function(m) {
+                    return (m.type || '').toLowerCase() === selType;
+                });
+            }
+            if (selYear) {
+                movies = movies.filter(function(m) {
+                    return (m.year || '') === selYear;
+                });
+            }
+            if (selCategory) {
+                movies = movies.filter(function(m) {
+                    return (m.category || m.genre || '').toLowerCase() === selCategory;
+                });
+            }
+
+            // Update timeline label
+            var parts = [];
+            if (selType)     parts.push(selType.charAt(0).toUpperCase() + selType.slice(1));
+            if (selYear)     parts.push(selYear);
+            if (selCategory) {
+                var catEl = document.getElementById('selCategory');
+                parts.push(catEl.options[catEl.selectedIndex].text);
+            }
+            document.getElementById('timelineText').textContent = parts.length ? parts.join(' · ') + ' Movies' : 'All Movies';
+
+            renderReleases(movies);
+        }
+
+        function renderReleases(movies) {
+            var grid  = document.getElementById("releasesGrid");
+            var empty = document.getElementById("emptyState");
+            grid.innerHTML = "";
+
+            // Sort by active first (newest ID first), coming soon last (newest ID first)
+            movies.sort(function (a, b) {
+                var aComing = (a.status || "").toLowerCase() === "coming soon" ? 1 : 0;
+                var bComing = (b.status || "").toLowerCase() === "coming soon" ? 1 : 0;
+                if (aComing !== bComing) {
+                    return aComing - bComing;
+                }
+                return (b.id || 0) - (a.id || 0);
+            });
+
+            var countEl = document.getElementById("resultCount");
+            if (countEl) {
+                countEl.textContent = movies.length + " Movies";
+            }
+
+            if (movies.length === 0) {
+                empty.style.display = "flex";
+                return;
+            }
+            empty.style.display = "none";
+
+            movies.forEach(function (movie) {
+                var isComingSoon = movie.status && movie.status.toLowerCase() === "coming soon";
+                var movieType = (movie.type || "").toLowerCase();
+                var movieYear = movie.year || "";
+
+                var card = document.createElement("a");
+                card.href = "watch.html?type=" + movieType + "&year=" + movieYear + "&id=" + movie.id;
+                card.className = "list-card-link new-release-card";
+
+                if (isComingSoon) {
+                    card.style.opacity = "0.45";
+                    card.style.filter = "grayscale(60%)";
+                }
+
+                card.innerHTML =
+                    '<div class="list-card">' +
+                    '<div class="list-card-img-wrapper">' +
+                    '<img class="list-card-img" src="./src/images/' + movieType + '/' + movieYear + '/' + movie.image + '" alt="' + movie.title + '" loading="lazy">' +
+                    '<span class="list-card-badge">' + (movie.year || '-') + '</span>' +
+                    (isComingSoon ? '<span class="coming-soon-badge">Coming Soon</span>' : '') +
+                    '</div>' +
+                    '<div class="list-card-details">' +
+                    '<h3 class="list-card-title">' + movie.title + '</h3>' +
+                    '<p class="list-card-info">' + (movie.language || '-') + ' • ' + (movie.release || movie.year || '-') + '</p>' +
+                    '<div class="list-card-action">' +
+                    '<i class="fa-solid fa-circle-play"></i> Watch Ads - Unlock' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+                grid.appendChild(card);
+            });
+        }
+    </script>
+
+    <style>
+        .list-card-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            top: auto;
+            right: auto;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(135deg, #ff0040, #c2003b);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 3;
+            box-shadow: 0 0 10px rgba(255, 0, 64, 0.7), 0 2px 8px rgba(0, 0, 0, 0.4);
+            animation: cs-pulse 1.8s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        @keyframes cs-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(255, 0, 64, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 18px rgba(255, 0, 64, 1), 0 2px 8px rgba(0, 0, 0, 0.4);
+            }
+        }
+    </style>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+</body>
+
+</html>

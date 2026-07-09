@@ -1,426 +1,440 @@
 /**
- * TVK Movies Admin - Movies Catalog Controller
- * Manages search, filters, pagination, Details View Modal, and Delete confirmations.
+ * Movies list view and CRUD operation logic.
  */
 
-// Local catalogs state cache
-let rawMovies = [];
-let filteredMovies = [];
+import { getMovies, addMovie, updateMovie, deleteMovie } from './api.js';
+import { openAddModal, openEditModal, closeModal } from './modal.js';
+import { showToast, getPosterPlaceholder, formatDate } from './utils.js';
+
+// State variables
+let movies = [];          // Current movies list in memory for the active Type/Year
+let filteredMovies = [];  // Filtered movies based on search and status
 let currentPage = 1;
-const pageSize = 5; // 5 items per page for clean table view
-let activeDeleteId = null;
+const itemsPerPage = 8;  // Display 8 rows per page for good visual balance
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Initialise session user profiles
-    initUserProfile();
+// Filter and UI State
+let selectedType = 'tamil';
+let selectedYear = '2026';
+let selectedStatus = 'all';
+let searchQuery = '';
+let movieToDeleteId = null;
 
-    // 2. Setup Responsive Sidebar controls
-    setupSidebarToggle();
+// DOM Elements
+let tableBody = null;
+let filterTypeEl = null;
+let filterYearEl = null;
+let filterStatusEl = null;
+let searchInputEl = null;
+let navSearchInputEl = null;
+let paginationContainer = null;
+let addBtnEl = null;
+let deleteModalEl = null;
+let deleteConfirmBtnEl = null;
+let deleteCancelBtnEl = null;
 
-    // 3. Bind Search and Filter listeners
-    setupFilters();
+/**
+ * Initialize movies page DOM elements and event listeners.
+ */
+export function initMovies() {
+  tableBody = document.getElementById('movies-table-body');
+  filterTypeEl = document.getElementById('filter-type');
+  filterYearEl = document.getElementById('filter-year');
+  filterStatusEl = document.getElementById('filter-status');
+  searchInputEl = document.getElementById('search-title');
+  navSearchInputEl = document.getElementById('nav-search');
+  paginationContainer = document.getElementById('pagination-container');
+  addBtnEl = document.getElementById('add-movie-btn');
+  
+  // Delete modal elements
+  deleteModalEl = document.getElementById('delete-confirm-modal');
+  deleteConfirmBtnEl = document.getElementById('confirm-delete-btn');
+  deleteCancelBtnEl = document.getElementById('cancel-delete-btn');
 
-    // 4. Fetch movies list
-    await fetchCatalog();
-});
+  if (!tableBody || !filterTypeEl || !filterYearEl) {
+    console.error('Movies table DOM elements missing.');
+    return;
+  }
 
-function initUserProfile() {
-    const userNameElement = document.getElementById('profile-name');
-    const avatarLetters = document.getElementById('avatar-letters');
-    const logoutBtn = document.getElementById('sidebar-logout');
+  // Dropdown filter changes
+  filterTypeEl.addEventListener('change', (e) => {
+    selectedType = e.target.value;
+    currentPage = 1;
+    loadAndRenderMovies();
+  });
 
-    if (window.auth) {
-        const username = window.auth.getUsername();
-        if (userNameElement) userNameElement.textContent = username;
-        if (avatarLetters) {
-            avatarLetters.textContent = username.slice(0, 2).toUpperCase();
-        }
-    }
+  filterYearEl.addEventListener('change', (e) => {
+    selectedYear = e.target.value;
+    currentPage = 1;
+    loadAndRenderMovies();
+  });
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (confirm('Are you sure you want to sign out?')) {
-                window.auth.logout();
-            }
-        });
-    }
-}
+  filterStatusEl.addEventListener('change', (e) => {
+    selectedStatus = e.target.value;
+    currentPage = 1;
+    applyFiltersAndRender();
+  });
 
-function setupSidebarToggle() {
-    const toggleBtn = document.getElementById('sidebar-toggle-btn');
-    const sidebar = document.getElementById('app-sidebar');
+  // Local Search Input filter
+  searchInputEl.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    // Sync with navbar search input if it exists
+    if (navSearchInputEl) navSearchInputEl.value = e.target.value;
+    currentPage = 1;
+    applyFiltersAndRender();
+  });
 
-    if (toggleBtn && sidebar) {
-        toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('open');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggleBtn) {
-                sidebar.classList.remove('open');
-            }
-        });
-    }
-}
-
-// Global Modal handlers
-window.closeModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove('active');
-};
-
-window.openModal = function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.add('active');
-};
-
-/* --- FETCH & RENDER ENGINE --- */
-async function fetchCatalog() {
-    try {
-        rawMovies = await window.api.getMovies();
-        applyFilters();
-    } catch (err) {
-        console.error('Failed to query movie catalog: ', err);
-        showToast('Database Error', 'Could not load movies list.', 'error');
-        
-        // Update table UI to show actionable CORS/connection error instead of sticking on "Loading..."
-        const tableBody = document.getElementById('movies-catalog-rows');
-        if (tableBody) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align:center; padding:50px 20px;">
-                        <div style="color:var(--status-error); font-weight:600; font-size:1.1rem; margin-bottom:8px;">
-                            Connection to Database Failed
-                        </div>
-                        <div style="font-size:0.85rem; color:var(--text-muted); max-width:600px; margin:0 auto; line-height:1.6;">
-                            This is usually caused by a CORS policy block or a network issue. <br>
-                            If you are running the Admin Panel locally, the browser blocks requests to the Cloudflare Worker unless it returns 
-                            <code>Access-Control-Allow-Origin: *</code> (and handles preflight <code>OPTIONS</code> requests).
-                        </div>
-                        <div style="margin-top:20px; font-size:0.85rem; color:var(--text-muted);">
-                            Current Endpoint: <code style="background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; border:1px solid rgba(255,255,255,0.1); color:var(--text-main); font-family:monospace;">https://database.kanchanavenkatesan1986.workers.dev/movies</code>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }
-    }
-}
-
-function setupFilters() {
-    const searchBar = document.getElementById('search-bar');
-    const filterCat = document.getElementById('filter-category');
-    const filterLang = document.getElementById('filter-language');
-
-    if (searchBar) searchBar.addEventListener('input', () => { currentPage = 1; applyFilters(); });
-    if (filterCat) filterCat.addEventListener('change', () => { currentPage = 1; applyFilters(); });
-    if (filterLang) filterLang.addEventListener('change', () => { currentPage = 1; applyFilters(); });
-}
-
-function applyFilters() {
-    const query = document.getElementById('search-bar').value.toLowerCase().trim();
-    const catFilter = document.getElementById('filter-category').value;
-    const langFilter = document.getElementById('filter-language').value;
-
-    filteredMovies = rawMovies.filter(movie => {
-        // 1. Search Query mapping
-        const matchesSearch = !query || 
-            (movie.title && movie.title.toLowerCase().includes(query)) ||
-            (movie.year && movie.year.toString().toLowerCase().includes(query)) ||
-            (movie.language && movie.language.toLowerCase().includes(query)) ||
-            (movie.director && movie.director.toLowerCase().includes(query));
-
-        // 2. Category Dropdown mapping
-        const matchesCategory = catFilter === 'ALL' || (movie.category && movie.category === catFilter);
-
-        // 3. Language Dropdown mapping
-        const matchesLanguage = langFilter === 'ALL' || (movie.language && movie.language === langFilter);
-
-        return matchesSearch && matchesCategory && matchesLanguage;
+  // Navbar Search Input filter (syncs back to search input)
+  if (navSearchInputEl) {
+    navSearchInputEl.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      searchInputEl.value = e.target.value;
+      currentPage = 1;
+      applyFiltersAndRender();
     });
+  }
 
-    renderTable();
+  // Add Movie Button
+  addBtnEl.addEventListener('click', () => {
+    openAddModal(movies);
+  });
+
+  // Delete modal actions
+  if (deleteConfirmBtnEl && deleteCancelBtnEl && deleteModalEl) {
+    deleteConfirmBtnEl.addEventListener('click', executeDelete);
+    deleteCancelBtnEl.addEventListener('click', closeDeleteModal);
+    
+    // Close on overlay click
+    deleteModalEl.addEventListener('click', (e) => {
+      if (e.target === deleteModalEl) closeDeleteModal();
+    });
+  }
 }
 
+/**
+ * Load movies from API/Cache, apply local filters, and render the table.
+ */
+export async function loadAndRenderMovies() {
+  showLoader();
+  try {
+    movies = await getMovies(selectedType, selectedYear);
+    applyFiltersAndRender();
+  } catch (error) {
+    console.error('Error loading movies:', error);
+    showToast('Failed to load movies data.', 'error');
+    movies = [];
+    applyFiltersAndRender();
+  }
+}
+
+/**
+ * Filters movies list in memory by Search and Status, then triggers pagination and render.
+ */
+function applyFiltersAndRender() {
+  filteredMovies = movies.filter(movie => {
+    // Search only by title
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery);
+    
+    // Filter by status (All, Active, Coming Soon)
+    const matchesStatus = selectedStatus === 'all' || 
+                          movie.status.toLowerCase() === selectedStatus.toLowerCase();
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  renderTable();
+  renderPagination();
+}
+
+/**
+ * Render movie rows in table.
+ */
 function renderTable() {
-    const tableBody = document.getElementById('movies-catalog-rows');
-    const statusText = document.getElementById('pagination-status');
+  if (!tableBody) return;
+  tableBody.innerHTML = '';
+
+  if (filteredMovies.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" class="no-data-cell">
+          <div class="no-data-msg">
+            <span class="no-data-icon">🎬</span>
+            <p>No movies found matching the filters.</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Paginate list
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = filteredMovies.slice(startIndex, startIndex + itemsPerPage);
+
+  paginatedItems.forEach(movie => {
+    const tr = document.createElement('tr');
     
-    if (!tableBody) return;
-    tableBody.innerHTML = '';
-
-    const total = filteredMovies.length;
-    
-    if (total === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="7" style="text-align:center;color:var(--text-muted);padding:60px 0;">
-                    No matching movies found in this view.
-                </td>
-            </tr>
-        `;
-        if (statusText) statusText.textContent = `Showing 0 of 0 movies`;
-        renderPagination(0);
-        return;
-    }
-
-    // Pagination bounds
-    const totalPages = Math.ceil(total / pageSize);
-    if (currentPage > totalPages) currentPage = totalPages;
-    if (currentPage < 1) currentPage = 1;
-
-    const startIdx = (currentPage - 1) * pageSize;
-    const endIdx = Math.min(startIdx + pageSize, total);
-    
-    const pageMovies = filteredMovies.slice(startIdx, endIdx);
-
-    pageMovies.forEach(movie => {
-        const row = document.createElement('tr');
-        const posterSrc = movie.image && movie.image.startsWith('http') 
-            ? movie.image 
-            : 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&q=80&w=100';
-
-        row.innerHTML = `
-            <td>
-                <div class="poster-thumbnail-wrapper">
-                    <img class="poster-thumbnail" src="${posterSrc}" alt="${movie.title}" onerror="this.src='https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&q=80&w=100'">
-                </div>
-            </td>
-            <td>
-                <div class="movie-title-cell" title="${movie.title}">${movie.title}</div>
-            </td>
-            <td><span class="badge ${movie.category === 'Tamil' ? 'badge-primary' : 'badge-accent'}">${movie.category || 'N/A'}</span></td>
-            <td><span class="badge badge-secondary">${movie.language || 'N/A'}</span></td>
-            <td><span style="font-weight:600">${movie.year || 'N/A'}</span></td>
-            <td style="color:var(--text-muted); max-width: 140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${movie.director || 'N/A'}</td>
-            <td>
-                <div class="action-buttons" style="justify-content:center;">
-                    <button class="btn-action btn-action-view" onclick="viewMovieDetails(${movie.id})" title="View Complete Details">
-                        <svg viewBox="0 0 24 24"><path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17Z"/></svg>
-                    </button>
-                    <button class="btn-action btn-action-edit" onclick="editMovieRoute(${movie.id})" title="Edit Movie Record">
-                        <svg viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.07,6.18L3,17.25Z"/></svg>
-                    </button>
-                    <button class="btn-action btn-action-delete" onclick="triggerDeleteMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}')" title="Delete Movie Record">
-                        <svg viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
-                    </button>
-                </div>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
-
-    if (statusText) {
-        statusText.textContent = `Showing ${startIdx + 1} to ${endIdx} of ${total} movie${total === 1 ? '' : 's'}`;
-    }
-
-    renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-    const buttonsContainer = document.getElementById('pagination-buttons');
-    if (!buttonsContainer) return;
-    buttonsContainer.innerHTML = '';
-
-    if (totalPages <= 1) return;
-
-    // Previous Page Button
-    const prevBtn = document.createElement('button');
-    prevBtn.className = 'page-btn';
-    prevBtn.disabled = currentPage === 1;
-    prevBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/></svg>`;
-    prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    });
-    buttonsContainer.appendChild(prevBtn);
-
-    // Page Number Buttons
-    for (let i = 1; i <= totalPages; i++) {
-        // Show max 5 buttons (always include active, first, and last)
-        if (totalPages > 5 && i !== 1 && i !== totalPages && Math.abs(currentPage - i) > 1) {
-            if (i === 2 && currentPage > 3) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '0 6px';
-                ellipsis.style.color = 'var(--text-muted)';
-                buttonsContainer.appendChild(ellipsis);
-            }
-            if (i === totalPages - 1 && currentPage < totalPages - 2) {
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.style.padding = '0 6px';
-                ellipsis.style.color = 'var(--text-muted)';
-                buttonsContainer.appendChild(ellipsis);
-            }
-            continue;
-        }
-
-        const pageBtn = document.createElement('button');
-        pageBtn.className = `page-btn ${currentPage === i ? 'active' : ''}`;
-        pageBtn.textContent = i;
-        pageBtn.addEventListener('click', () => {
-            currentPage = i;
-            renderTable();
-        });
-        buttonsContainer.appendChild(pageBtn);
-    }
-
-    // Next Page Button
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'page-btn';
-    nextBtn.disabled = currentPage === totalPages;
-    nextBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.59Z"/></svg>`;
-    nextBtn.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderTable();
-        }
-    });
-    buttonsContainer.appendChild(nextBtn);
-}
-
-/* --- ACTION CONTROLLERS --- */
-
-window.editMovieRoute = function(id) {
-    window.location.href = `edit-movie.html?id=${id}`;
-};
-
-// Details Modal population
-window.viewMovieDetails = async function(id) {
-    try {
-        const movie = await window.api.getMovie(id);
-        if (!movie) throw new Error('Movie records look blank.');
-
-        // Populate text nodes
-        document.getElementById('detail-title').textContent = movie.title || 'Untitled Movie';
-        document.getElementById('detail-release').textContent = movie.release || 'N/A';
-        document.getElementById('detail-cat').textContent = movie.category || 'N/A';
-        document.getElementById('detail-lang').textContent = movie.language || 'N/A';
-        document.getElementById('detail-duration').textContent = movie.duration || 'N/A';
-        document.getElementById('detail-year').textContent = movie.year || 'N/A';
-        document.getElementById('detail-director').textContent = movie.director || 'N/A';
-        document.getElementById('detail-starring').textContent = movie.starring || 'N/A';
-        document.getElementById('detail-story').textContent = movie.story || 'No synopsis storyline available for this title.';
-
-        // Poster image fallback
-        const posterEl = document.getElementById('detail-poster');
-        posterEl.src = movie.image && movie.image.startsWith('http') 
-            ? movie.image 
-            : 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&q=80&w=200';
-        posterEl.alt = movie.title || 'Movie Poster';
-
-        // Stream and download buttons
-        const downloadsContainer = document.getElementById('detail-downloads');
-        downloadsContainer.innerHTML = '';
-
-        const resolMap = [
-            { key: '460p', label: '460p SD Stream' },
-            { key: '720p', label: '720p HD Stream' },
-            { key: '1080p', label: '1080p Full HD' }
-        ];
-
-        let hasLinks = false;
-        resolMap.forEach(res => {
-            const url = movie[res.key];
-            if (url && url.trim() && url !== 'https://example.com/360.mp4' && url !== 'https://example.com/720.mp4' && url !== 'https://example.com/1080.mp4') {
-                hasLinks = true;
-                const link = document.createElement('a');
-                link.href = url;
-                link.target = '_blank';
-                link.className = 'download-link-btn';
-                link.innerHTML = `
-                    <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"/></svg>
-                    <span>${res.label}</span>
-                `;
-                downloadsContainer.appendChild(link);
-            }
-        });
-
-        if (!hasLinks) {
-            downloadsContainer.innerHTML = `
-                <div style="font-size:0.8rem;color:var(--text-muted);font-style:italic">
-                    No active stream links mapped for this item.
-                </div>
-            `;
-        }
-
-        openModal('detail-modal');
-    } catch (err) {
-        console.error('Failed to populate movie details: ', err);
-        showToast('Load Error', 'Could not open movie profile.', 'error');
-    }
-};
-
-// Delete confirmation handlers
-window.triggerDeleteMovie = function(id, title) {
-    activeDeleteId = id;
-    const titleEl = document.getElementById('delete-movie-title');
-    if (titleEl) titleEl.textContent = `"${title}"`;
-    openModal('delete-modal');
-};
-
-const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', async () => {
-        if (!activeDeleteId) return;
-
-        closeModal('delete-modal');
-        
-        try {
-            const success = await window.api.deleteMovie(activeDeleteId);
-            if (success) {
-                showToast('Record Deleted', 'Movie record was purged successfully.', 'success');
-                // Reload grid
-                await fetchCatalog();
-            } else {
-                throw new Error('Server rejected deletion request.');
-            }
-        } catch (err) {
-            console.error('Failed to delete movie record:', err);
-            showToast('Deletion Failed', 'Could not clean record from database.', 'error');
-        } finally {
-            activeDeleteId = null;
-        }
-    });
-}
-
-// Toast Alerts system (identical style)
-window.showToast = function(title, desc, type = 'success') {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    
-    let iconPath = '';
-    if (type === 'success') {
-        iconPath = '<path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>';
-    } else if (type === 'error') {
-        iconPath = '<path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+    // UI Status Rules:
+    // If status == "Coming Soon", apply reduced row opacity and a grayscale/dim poster style.
+    const isComingSoon = movie.status.toLowerCase() === 'coming soon';
+    if (isComingSoon) {
+      tr.className = 'movie-row-coming-soon';
     } else {
-        iconPath = '<path d="M11,9H13V11H11V9M11,13H13V17H11V13M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+      tr.className = 'movie-row-active';
     }
 
-    toast.innerHTML = `
-        <div class="toast-icon">
-            <svg viewBox="0 0 24 24">${iconPath}</svg>
+    const movieType = (movie.type || selectedType || "").toLowerCase();
+    const movieYear = movie.year || selectedYear || "";
+    const posterUrl = movie.image && !movie.image.startsWith('http') ? `../src/images/${movieType}/${movieYear}/${movie.image}` : getPosterPlaceholder(movie.image);
+    const statusClass = isComingSoon ? 'status-badge-soon' : 'status-badge-active';
+    
+    // Format created date
+    const formattedCreatedDate = movie.created_at ? formatDate(movie.created_at) : '-';
+
+    tr.innerHTML = `
+      <td class="col-poster">
+        <img class="table-poster ${isComingSoon ? 'grayscale' : ''}" src="${posterUrl}" alt="${movie.title}" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=3540&auto=format&fit=crop'" />
+      </td>
+      <td class="col-title highlight-title">${movie.title}</td>
+      <td class="col-release">${movie.release || '-'}</td>
+      <td class="col-lang">${movie.language || '-'}</td>
+      <td class="col-year">${movie.year}</td>
+      <td class="col-duration">${movie.duration || '-'}</td>
+      <td class="col-status">
+        <span class="status-badge ${statusClass}">${movie.status}</span>
+      </td>
+      <td class="col-created">${formattedCreatedDate}</td>
+      <td class="col-actions">
+        <div class="action-buttons-wrapper">
+          <button class="action-btn view-btn" data-id="${movie.id}" title="View Movie Details">👁️</button>
+          <button class="action-btn edit-btn" data-id="${movie.id}" title="Edit Movie">✏️</button>
+          <button class="action-btn delete-btn" data-id="${movie.id}" title="Delete Movie">🗑️</button>
         </div>
-        <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-desc">${desc}</div>
-        </div>
+      </td>
     `;
 
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 50);
+    // Bind view/edit/delete clicks to specific rows
+    tr.querySelector('.view-btn').addEventListener('click', () => {
+      openViewModal(movie);
+    });
 
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, 3500);
-};
+    tr.querySelector('.edit-btn').addEventListener('click', () => {
+      openEditModal(movie, movies);
+    });
+
+    tr.querySelector('.delete-btn').addEventListener('click', () => {
+      openDeleteConfirmation(movie.id);
+    });
+
+    tableBody.appendChild(tr);
+  });
+}
+
+/**
+ * Render pagination controls.
+ */
+function renderPagination() {
+  if (!paginationContainer) return;
+  paginationContainer.innerHTML = '';
+
+  const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
+  if (totalPages <= 1) return; // Hide pagination if only 1 page
+
+  // Prev Button
+  const prevBtn = document.createElement('button');
+  prevBtn.className = `pag-btn ${currentPage === 1 ? 'disabled' : ''}`;
+  prevBtn.textContent = '◀';
+  prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+      renderPagination();
+    }
+  });
+  paginationContainer.appendChild(prevBtn);
+
+  // Page Numbers
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement('button');
+    pageBtn.className = `pag-btn page-num ${currentPage === i ? 'active' : ''}`;
+    pageBtn.textContent = i;
+    pageBtn.addEventListener('click', () => {
+      currentPage = i;
+      renderTable();
+      renderPagination();
+    });
+    paginationContainer.appendChild(pageBtn);
+  }
+
+  // Next Button
+  const nextBtn = document.createElement('button');
+  nextBtn.className = `pag-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+  nextBtn.textContent = '▶';
+  nextBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+      renderPagination();
+    }
+  });
+  paginationContainer.appendChild(nextBtn);
+}
+
+/**
+ * Handle save/edit callback from the Modal.
+ * Sends a real POST (add) or PUT (edit) to the Cloudflare API,
+ * then refreshes the table from the server.
+ * @param {Object} movieData - The movie data fields matching JSON exactly.
+ * @param {boolean} isEdit - True if editing, false if creating.
+ */
+export async function handleSaveMovie(movieData, isEdit) {
+  // Disable save button to prevent double-submit
+  const saveBtn = document.querySelector('#movie-form .save-btn');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+  }
+
+  try {
+    if (isEdit) {
+      await updateMovie(selectedType, selectedYear, movieData.id, movieData);
+      showToast('Movie updated successfully!', 'success');
+    } else {
+      await addMovie(selectedType, selectedYear, movieData);
+      showToast('Movie added successfully!', 'success');
+    }
+
+    // Close modal and reload fresh data from API
+    closeModal();
+    await loadAndRenderMovies();
+
+  } catch (error) {
+    console.error('Save failed:', error);
+    showToast(`Save failed: ${error.message}`, 'error', 5000);
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save';
+    }
+  }
+}
+
+/**
+ * Open confirmation modal before deleting.
+ * @param {string} id - The movie ID.
+ */
+function openDeleteConfirmation(id) {
+  movieToDeleteId = id;
+  if (deleteModalEl) {
+    deleteModalEl.classList.add('active');
+  }
+}
+
+/**
+ * Close confirmation modal.
+ */
+function closeDeleteModal() {
+  movieToDeleteId = null;
+  if (deleteModalEl) {
+    deleteModalEl.classList.remove('active');
+  }
+}
+
+/**
+ * Execute delete operation — calls Cloudflare API DELETE then refreshes table.
+ */
+async function executeDelete() {
+  if (!movieToDeleteId) return;
+
+  const confirmBtn = deleteConfirmBtnEl;
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Deleting...';
+  }
+
+  try {
+    await deleteMovie(selectedType, selectedYear, movieToDeleteId);
+    showToast('Movie deleted successfully!', 'success');
+    closeDeleteModal();
+    await loadAndRenderMovies();
+  } catch (error) {
+    console.error('Delete failed:', error);
+    showToast(`Delete failed: ${error.message}`, 'error', 5000);
+  } finally {
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Delete';
+    }
+  }
+}
+
+/**
+ * Open the view-only movie details popup modal.
+ * @param {Object} movie - Movie data object.
+ */
+function openViewModal(movie) {
+  const viewModal = document.getElementById('view-movie-modal');
+  if (!viewModal) return;
+
+  // Helper: render a video quality check button
+  function videoCheckBtn(label, url) {
+    if (!url || url.trim() === '') {
+      return `<span class="video-check-btn video-check-missing" title="No link available">${label} — Not Available</span>`;
+    }
+    return `<a href="${url}" target="_blank" rel="noopener" class="video-check-btn video-check-available" title="Open ${label} link">${label} ✅ Check</a>`;
+  }
+
+  const isComingSoon = movie.status && movie.status.toLowerCase() === 'coming soon';
+  const statusClass = isComingSoon ? 'status-badge-soon' : 'status-badge-active';
+  const movieType = (movie.type || selectedType || "").toLowerCase();
+  const movieYear = movie.year || selectedYear || "";
+  const posterUrl = movie.image && !movie.image.startsWith('http') ? `../src/images/${movieType}/${movieYear}/${movie.image}` : getPosterPlaceholder(movie.image);
+
+  // Populate all detail fields
+  viewModal.querySelector('#view-poster').src = posterUrl;
+  viewModal.querySelector('#view-poster').onerror = function() {
+    this.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=3540&auto=format&fit=crop';
+  };
+  viewModal.querySelector('#view-title').textContent = movie.title || '-';
+  viewModal.querySelector('#view-status').textContent = movie.status || '-';
+  viewModal.querySelector('#view-status').className = `status-badge ${statusClass}`;
+  viewModal.querySelector('#view-id').textContent = movie.id || '-';
+  viewModal.querySelector('#view-type').textContent = (movie.type || '-').toUpperCase();
+  viewModal.querySelector('#view-year').textContent = movie.year || '-';
+  viewModal.querySelector('#view-release').textContent = movie.release || '-';
+  viewModal.querySelector('#view-language').textContent = movie.language || '-';
+  viewModal.querySelector('#view-duration').textContent = movie.duration || '-';
+  viewModal.querySelector('#view-category').textContent = movie.category || '-';
+  viewModal.querySelector('#view-director').textContent = movie.director || '-';
+  viewModal.querySelector('#view-starring').textContent = movie.starring || '-';
+  viewModal.querySelector('#view-story').textContent = movie.story || 'No story description available.';
+  viewModal.querySelector('#view-created').textContent = movie.created_at ? formatDate(movie.created_at) : '-';
+
+  // Render video quality buttons
+  const videoLinksContainer = viewModal.querySelector('#view-video-links');
+  if (videoLinksContainer) {
+    videoLinksContainer.innerHTML = `
+      ${videoCheckBtn('360p', movie.p360)}
+      ${videoCheckBtn('720p', movie.p720)}
+      ${videoCheckBtn('1080p', movie.p1080)}
+    `;
+  }
+
+  viewModal.classList.add('active');
+}
+
+/**
+ * Show animated loading spinner in table body.
+ */
+function showLoader() {
+  if (!tableBody) return;
+  tableBody.innerHTML = `
+    <tr>
+      <td colspan="9" class="loader-cell">
+        <div class="loader-wrapper">
+          <div class="spinner"></div>
+          <p>Fetching movies from database...</p>
+        </div>
+      </td>
+    </tr>
+  `;
+}

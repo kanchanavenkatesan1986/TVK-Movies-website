@@ -1,190 +1,255 @@
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Feedback</title>
-    <link rel="stylesheet"  href="./index.css" />
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=NATS:wght@400&display=swap" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - VIP Movies</title>
+    
+    <link rel="stylesheet" href="../src/main.css" />
+    <script src="../src/main.js" defer></script>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        .feedback-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .feedback-title {
+            font-size: clamp(24px, 4vw, 32px);
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .feedback-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(245, 197, 24, 0.15);
+        }
+
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, #d4a70f 100%);
+            color: #000000;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(245, 197, 24, 0.2);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(245, 197, 24, 0.35);
+        }
+
+        .notice-section {
+            margin-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 24px;
+        }
+
+        .notice-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .notice-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feedback-footer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 40px 0 10px 0;
+        }
+    </style>
 </head>
 
-<div id="myNav" class="overla">
-    <img id="close" onclick="closeNav()" src="../m-image/Close icon.png"/>
-    <img id="navimg" src="../m-image/VIP Movies.jpg"/>
-    <a href="/index.html"><img id="navb" src="../m-image/N-Home.png"/></a>
-    <a href="/sub-pages/feedback.html"><img id="navb" src="../m-image/N-feedback.png"/></a>
-    <a href="/sub-pages/about.html"><img id="navb" src="../m-image/N-about.png"/></a>
-  </div>
+<body>
 
-<body style="background-color: rgb(0, 0, 0); width: 980px; color:white; font-family:'Lexend',sans-serif;">
+<div class="main">
 
-    <div style="position: relative; background-color: rgb(0, 0, 0); height: 110px; width: 980px;">
-        <img id="menu" onclick="openNav()" src="../m-image/Menu icon.png"/>
-        <img id="title" src="../m-image/Vip Title.png"/>
-        <a href="./search.html"><img id="search" src="../m-image/Search icon.png"/></a>
+    <!-- Navigation Drawer (Overlay) -->
+    <div id="myNav" class="overlay">
+        <img src="../m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+        <img src="../m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
+        
+        <div class="nav-menu">
+            <a href="../index.html" class="nav-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="feedback.html" class="nav-link">
+                <i class="fa-solid fa-comment-dots"></i> Feedback
+            </a>
+            <a href="about.html" class="nav-link">
+                <i class="fa-solid fa-circle-info"></i> About
+            </a>
+        </div>
     </div>
 
-<!-- FEEDBACK CONTENT -->
-<div style="width:900px;background:#111; padding:40px; border-radius:20px;">
+    <!-- Header -->
+    <div class="header">
+        <img src="../m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+        <img src="../m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='../index.html'" style="cursor:pointer;">
+        <a href="../search.html">
+            <img src="../m-image/Search icon.png" class="search" alt="Search">
+        </a>
+    </div>
 
-<h1 style="font-size:40px; margin-bottom:20px; color:rgba(246, 255, 0, 1);">User Feedback</h1>
+    <!-- FEEDBACK CONTENT -->
+    <div class="feedback-card">
+        <h1 class="feedback-title">User Feedback</h1>
+        <p>
+            We value your feedback! Your suggestions help improve TVK Movies – Vintage Cinema. If you experience any issues, have recommendations, or notice layout bugs, please let us know.
+        </p>
 
-<p style="font-size:25px; line-height:1.6;">
-We value your feedback! Your suggestions help improve TVK Movies – Vintage Cinema.
-If you experience any issues or have recommendations, please let us know.
-</p>
+        <form class="feedback-form" action="#" onsubmit="event.preventDefault(); alert('Feedback submitted! Thank you.'); this.reset();">
+            <div class="form-group">
+                <label class="form-label">Your Name</label>
+                <input type="text" class="form-control" placeholder="Enter your name" required>
+            </div>
 
-<br><br>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" placeholder="Enter your email" required>
+            </div>
 
-<form style="display:flex; flex-direction:column; gap:20px;">
+            <div class="form-group">
+                <label class="form-label">Feedback Type</label>
+                <select class="form-control" required>
+                    <option value="General Feedback">General Feedback</option>
+                    <option value="Bug Report">Bug Report</option>
+                    <option value="Content Suggestion">Content Suggestion</option>
+                    <option value="Copyright Concern">Copyright Concern</option>
+                </select>
+            </div>
 
-<label style="font-size:25px;">Your Name</label>
-<input type="text" placeholder="Enter your name"
-style="padding:15px; border-radius:8px; border:none; font-size:25px;">
+            <div class="form-group">
+                <label class="form-label">Your Message</label>
+                <textarea class="form-control" placeholder="Write your message here..." required></textarea>
+            </div>
 
-<label style="font-size:25px;">Email Address</label>
-<input type="email" placeholder="Enter your email"
-style="padding:15px; border-radius:8px; border:none; font-size:25px;">
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+            </button>
+        </form>
 
-<label style="font-size:25px;">Feedback Type</label>
-<select style="padding:15px; border-radius:8px; border:none; font-size:25px;">
-    <option>General Feedback</option>
-    <option>Bug Report</option>
-    <option>Content Suggestion</option>
-    <option>Copyright Concern</option>
-</select>
+        <div class="notice-section">
+            <h2 class="notice-title">Important Notice</h2>
+            <p class="notice-text">
+                TVK Movies only provides access to films that are in the public domain. If you believe any content has been included incorrectly, please select "Copyright Concern" in the form above and provide reference links. We will review and take appropriate action immediately.
+            </p>
+        </div>
+    </div>
 
-<label style="font-size:25px;">Your Message</label>
-<textarea rows="6" placeholder="Write your feedback here..."
-style="padding:15px; border-radius:8px; border:none; font-size:25px;"></textarea>
+    <!-- FOOTER -->
+    <div class="feedback-footer">
+        © 2026 TVK Movies – Vintage Cinema<br>
+        Public Domain Movies Only
+    </div>
 
-<button type="submit"
-style="padding:18px; background:rgba(246, 255, 0, 1); border:none; border-radius:10px; font-size:25px; color:rgb(0, 0, 0); cursor:pointer;font-weight: bolder;">
-Submit Feedback
-</button>
-
-</form>
-
-<br><br>
-
-<h2 style="color:rgba(246, 255, 0, 1);">Important Notice</h2>
-
-<p style="font-size:20px; line-height:1.6;">
-TVK Movies only provides access to films that are in the public domain.
-If you believe any content has been included incorrectly, please select
-“Copyright Concern” and provide details. We will review and take appropriate action.
-</p>
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="../index.html" class="bottom-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="../search.html" class="bottom-nav-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </a>
+        <a href="../years.html" class="bottom-nav-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Years</span>
+        </a>
+        <a href="../filter.html" class="bottom-nav-item">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Filter</span>
+        </a>
+        <a href="../setting.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
 
 </div>
-
-<!-- FOOTER -->
-<div style="text-align:center; font-size:20px; color:gray; margin:40px 0;">
-© 2026 TVK Movies – Vintage Cinema<br>
-Public Domain Movies Only
-</div>
-
 
 <!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'>
-</script><!-- End Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script>
+<!-- End Cloudflare Web Analytics -->
 
 </body>
-
-
-
-    
-<style>
-
-    body {
-  font-family: 'Lato', sans-serif;
-}
-
-.overla {
-  height: 100%;
-  width: 0%;
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  background-color: rgb(16, 16, 19);
-  overflow-x: hidden;
-  transition: 0.5s;
-}
-
-.overla a {
-  padding: 8px;
-  text-decoration: none;
-  font-size: 36px;
-  color: #ffffff;
-  display: block;
-  transition: 0.3s;
-}
-#close{
-    position: absolute; 
-    width: 70px;
-    top: 20px;
-    left: 20px;
-}
-
-
-
-    *{
-        padding: 0%;
-        margin: 0%;
-        text-decoration: none;
-    }
-    #navimg{
-        position: absolute;
-        top: 100px;
-        width: 420px;
-        height: 420px;
-        left: 20px;
-        border-radius: 5px;
-        z-index: 10;
-    }
-    #navb{
-        position: relative;
-        width: 420px;
-        height: 90px;
-        left: 20px;
-        top: 530px;
-        margin-bottom:-17px;
-        z-index: 10;
-        
-        
-    }
-    #menu{
-        position: absolute;
-        width: 70px;
-        height: 70px;
-        top: 20px;
-        left: 20px;
-    }
-    #title{
-        position: absolute;
-        width: 300px;
-        top: 15px;
-        left: 340px;
-    }
-    #search{
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        top: 23px;
-        right: 23px;
-    }
-
-</style>
-
-<script>
-    function openNav() {
-      document.getElementById("myNav").style.width = "460px";
-    }
-    
-    function closeNav() {
-      document.getElementById("myNav").style.width = "0%";
-    }
-    </script>
-
 </html>

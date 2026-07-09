@@ -1,48 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>VIP Movies</title>
-
-<link rel="stylesheet" href="./src/main.css"/>
-<script src="./src/main.js"></script>
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template - VIP Movies</title>
+    
+    <link rel="stylesheet" href="./main.css"/>
+    <script src="./main.js" defer></script>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 
 <body>
 
 <div class="main">
 
-    <!-- Overlay -->
+    <!-- Navigation Drawer (Overlay) -->
     <div id="myNav" class="overlay">
-        <img src="./m-image/Close icon.png" class="close" onclick="closeNav()">
-
-        <img src="./m-image/VIP Movies.jpg" class="navimg">
-
-        <a href="index.html">
-            <img src="./m-image/N-Home.png" class="navb">
-        </a>
-
-        <a href="#">
-            <img src="./m-image/N-feedback.png" class="navb">
-        </a>
-
-        <a href="#">
-            <img src="./m-image/N-about.png" class="navb">
-        </a>
+        <img src="../m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+        <img src="../m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
+        
+        <div class="nav-menu">
+            <a href="../index.html" class="nav-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="../sub-pages/feedback.html" class="nav-link">
+                <i class="fa-solid fa-comment-dots"></i> Feedback
+            </a>
+            <a href="../sub-pages/about.html" class="nav-link">
+                <i class="fa-solid fa-circle-info"></i> About
+            </a>
+            <a href="../setting.html" class="nav-link">
+                <i class="fa-solid fa-gear"></i> Setting
+            </a>
+        </div>
     </div>
 
     <!-- Header -->
     <div class="header">
-        <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()">
-        <img src="./m-image/Vip Title.png" class="title">
-        <a href="search.html">
-            <img src="./m-image/Search icon.png" class="search">
+        <img src="../m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+        <img src="../m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='../index.html'" style="cursor:pointer;">
+        <a href="../search.html">
+            <img src="../m-image/Search icon.png" class="search" alt="Search">
         </a>
     </div>
 
+    <!-- PAGE CONTENT GOES HERE -->
 
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="../index.html" class="bottom-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="../search.html" class="bottom-nav-item">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </a>
+        <a href="../years.html" class="bottom-nav-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Years</span>
+        </a>
+        <a href="../filter.html" class="bottom-nav-item">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Filter</span>
+        </a>
+        <a href="../setting.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Setting</span>
+        </a>
+    </div>
 
 </div>
 

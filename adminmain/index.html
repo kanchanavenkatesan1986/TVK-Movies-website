@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Movies Admin - Secure Access Login</title>
+    <!-- Favicon or custom styling -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Load Auth module early in head to block rendering if already authenticated -->
+    <script src="js/auth.js"></script>
+    
+    <style>
+        /* Login Page Specific Styling overrides */
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+            animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .login-logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+
+        .login-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #d4d4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            transition: all 0.25s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 12px var(--input-focus-glow);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-input.has-icon {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .error-message {
+            font-size: 0.8rem;
+            color: var(--danger);
+            margin-top: 6px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .error-message.active {
+            display: flex;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Page Loading Overlay -->
+    <div id="global-loader" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-card glass-container">
+            <div class="login-header">
+                <div class="login-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21,6H3V5H21V6M21,18H3V19H21V18M18,9H6V15H18V9M8,11H10V13H8V11M14,11H16V13H14V11Z" />
+                    </svg>
+                </div>
+                <h1 class="login-title">TVK Movies</h1>
+                <p class="login-subtitle">SECURE ADMIN GATEWAY</p>
+            </div>
+
+            <form id="login-form" novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input class="form-input" type="text" id="username" autocomplete="username" placeholder="Enter admin username" required>
+                    <div id="username-error" class="error-message">
+                        <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        <span>Username is required.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input class="form-input has-icon" type="password" id="password" autocomplete="current-password" placeholder="••••••••••••" required>
+                        <button type="button" class="password-toggle" id="toggle-pw" aria-label="Toggle Password Visibility">
+                            <svg id="eye-icon" viewBox="0 0 24 24">
+                                <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="password-error" class="error-message">
+                        <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/></svg>
+                        <span>Password is required.</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-btn">
+                    <span>Sign In</span>
+                    <svg style="width:18px;height:18px;fill:currentColor" viewBox="0 0 24 24">
+                        <path d="M19,3H5C3.89,3 3,3.89 3,5V9H5V5H19V19H5V15H3V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M10.08,15.58L11.5,17L16.5,12L11.5,7L10.08,8.41L12.67,11H3V13H12.67L10.08,15.58Z" />
+                    </svg>
+                </button>
+            </form>
+
+            <p class="footer-note">Authorized personnel only. TVK Movies Admin Panel.</p>
+        </div>
+    </div>
+
+    <!-- UI Helper and Toast Notifications Logic -->
+    <script>
+        // Toast Alert helper function
+        function showToast(title, desc, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let iconPath = '';
+            if (type === 'success') {
+                iconPath = '<path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>';
+            } else if (type === 'error') {
+                iconPath = '<path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+            } else {
+                iconPath = '<path d="M11,9H13V11H11V9M11,13H13V17H11V13M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2Z"/>';
+            }
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <svg viewBox="0 0 24 24">${iconPath}</svg>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-desc">${desc}</div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            
+            // Force reflow and show
+            setTimeout(() => toast.classList.add('show'), 50);
+
+            // Remove automatically
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        // Toggle Password visibility
+        const togglePwBtn = document.getElementById('toggle-pw');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        togglePwBtn.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path d="M11.83,9L15,12.17C14.83,12.44 14.56,12.7 14.24,12.83L11.83,9M9,12.24L11.76,15C11.6,15 11.45,15 11.3,15A3,3 0 0,1 8.3,12C8.3,11.85 8.3,11.7 8.3,11.54M2,4.27L3.27,3L3.84,3.57L4.41,4.14L19.73,19.46L20.3,20.03L21.57,18.76L20.06,17.25C21.8,15.82 23,14 23,12C21.27,7.61 17,4.5 12,4.5C10.74,4.5 9.53,4.72 8.41,5.13L6.81,3.53L2,4.27M12,7A5,5 0 0,1 17,12C17,12.84 16.66,13.6 16.12,14.16L14.77,12.8C14.92,12.56 15,12.3 15,12A3,3 0 0,0 12,9C11.7,9 11.44,9.08 11.2,9.23L9.84,7.87C10.4,7.34 11.16,7 12,7M7.22,9.1L8.6,10.47C8.42,10.95 8.3,11.46 8.3,12A3,3 0 0,0 11.3,15C11.84,15 12.35,14.88 12.83,14.7L14.2,16.08C13.5,16.66 12.8,17 12,17C7,17 2.73,13.89 1,9.5C1.8,7.69 3.12,6.13 4.78,5L7.22,9.1Z"/>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17Z" />';
+            }
+        });
+
+        // Form Validation & Submit handling
+        const form = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const usernameError = document.getElementById('username-error');
+        const passwordError = document.getElementById('password-error');
+        const loader = document.getElementById('global-loader');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            let isValid = true;
+
+            // Username validation
+            if (!usernameInput.value.trim()) {
+                usernameError.classList.add('active');
+                isValid = false;
+            } else {
+                usernameError.classList.remove('active');
+            }
+
+            // Password validation
+            if (!passwordInput.value.trim()) {
+                passwordError.classList.add('active');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('active');
+            }
+
+            if (!isValid) return;
+
+            // Show loader
+            loader.classList.add('active');
+
+            setTimeout(() => {
+                const loginResult = window.auth.login(
+                    usernameInput.value.trim(),
+                    passwordInput.value.trim()
+                );
+
+                loader.classList.remove('active');
+
+                if (loginResult.success) {
+                    showToast('Access Granted', 'Welcome back, redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'pages/dashboard.html';
+                    }, 1000);
+                } else {
+                    showToast('Access Denied', loginResult.message, 'error');
+                }
+            }, 600);
+        });
+
+        // Live validation clearing
+        usernameInput.addEventListener('input', () => {
+            if (usernameInput.value.trim()) usernameError.classList.remove('active');
+        });
+        passwordInput.addEventListener('input', () => {
+            if (passwordInput.value.trim()) passwordError.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

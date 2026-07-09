@@ -1,108 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>VIP Movies</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Collections by Year - VIP Movies</title>
 
-<link rel="stylesheet" href="./src/main.css"/>
-<script src="./src/main.js"></script>
+    <link rel="stylesheet" href="./src/main.css" />
+    <script src="./src/main.js" defer></script>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap"/>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        .category-heading {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 24px 0 16px 0;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .category-heading::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 4px;
+            background-color: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Responsive Grid for Years lists */
+        .years-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .year-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 18px 24px;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .year-card i {
+            font-size: 20px;
+            color: var(--accent);
+            background-color: rgba(245, 197, 24, 0.1);
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .year-card:hover {
+            background-color: var(--bg-tertiary);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(245, 197, 24, 0.1);
+        }
+
+        .year-card:hover i {
+            background-color: var(--accent);
+            color: #000;
+            transform: scale(1.1) rotate(-8deg);
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="main">
+    <div class="main">
 
-    <!-- Overlay -->
-    <div id="myNav" class="overlay">
-        <img src="./m-image/Close icon.png" class="close" onclick="closeNav()">
+        <!-- Navigation Drawer (Overlay) -->
+        <div id="myNav" class="overlay">
+            <img src="./m-image/Close icon.png" class="close" onclick="closeNav()" alt="Close Menu">
+            <img src="./m-image/VIP Movies.jpg" class="navimg" alt="VIP Movies">
 
-        <img src="./m-image/VIP Movies.jpg" class="navimg">
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="sub-pages/feedback.html" class="nav-link">
+                    <i class="fa-solid fa-comment-dots"></i> Feedback
+                </a>
+                <a href="sub-pages/about.html" class="nav-link">
+                    <i class="fa-solid fa-circle-info"></i> About
+                </a>
+                <a href="setting.html" class="nav-link">
+                    <i class="fa-solid fa-gear"></i> Setting
+                </a>
+            </div>
+        </div>
 
-        <a href="index.html">
-            <img src="./m-image/N-Home.png" class="navb">
-        </a>
+        <!-- Header -->
+        <div class="header">
+            <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()" alt="Menu">
+            <img src="./m-image/Vip Title.png" class="title" alt="VIP Movies Logo" onclick="location.href='index.html'"
+                style="cursor:pointer;">
+            <a href="search.html">
+                <img src="./m-image/Search icon.png" class="search" alt="Search">
+            </a>
+        </div>
 
-        <a href="/sub-pages/feedback.html">
-            <img src="./m-image/N-feedback.png" class="navb">
-        </a>
+        <!-- Tamil Year Collections -->
+        <h2 class="category-heading">Tamil Movie Collections</h2>
+        <div class="years-grid">
+            <div class="year-card" onclick="filterMovie('tamil','2026')">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>2026 Tamil Movies</span>
+            </div>
+            <div class="year-card" onclick="filterMovie('tamil','2025')">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>2025 Tamil Movies</span>
+            </div>
+            <div class="year-card" onclick="filterMovie('tamil','2024')">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>2024 Tamil Movies</span>
+            </div>
+        </div>
 
-        <a href="/sub-pages/about.html">
-            <img src="./m-image/N-about.png" class="navb">
-        </a>
+        <!-- Hollywood Year Collections -->
+        <h2 class="category-heading">Hollywood Movie Collections</h2>
+        <div class="years-grid">
+            <div class="year-card" onclick="filterMovie('hollywood','2026')">
+                <i class="fa-solid fa-film"></i>
+                <span>2026 Hollywood Movies</span>
+            </div>
+            <div class="year-card" onclick="filterMovie('hollywood','2025')">
+                <i class="fa-solid fa-film"></i>
+                <span>2025 Hollywood Movies</span>
+            </div>
+            <div class="year-card" onclick="filterMovie('hollywood','2024')">
+                <i class="fa-solid fa-film"></i>
+                <span>2024 Hollywood Movies</span>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <a href="index.html" class="bottom-nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="search.html" class="bottom-nav-item">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search</span>
+            </a>
+            <a href="years.html" class="bottom-nav-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Years</span>
+            </a>
+            <a href="filter.html" class="bottom-nav-item">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Filter</span>
+            </a>
+            <a href="setting.html" class="bottom-nav-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Setting</span>
+            </a>
+        </div>
+
     </div>
 
-    <!-- Header -->
-    <div class="header">
-        <img src="./m-image/Menu icon.png" class="menu" onclick="openNav()">
-        <img src="./m-image/Vip Title.png" class="title">
-        <a href="search.html">
-            <img src="./m-image/Search icon.png" class="search">
-        </a>
-    </div>
+    <script>
+        function filterMovie(type, year) {
+            location.href = "list.html?type=" + type + "&year=" + year;
+        }
+    </script>
 
-    <h1 class="heading">Tamil Years [ Collaction ]</h1>
-
-    <div class="years">
-        <h1 class="year" onclick="filterMovie('Tamil','2026')"><img class="y-icon" src="./m-image/Y icon.png"/>2026 Tamil Movies</h1>
-        <h1 class="year" onclick="filterMovie('Tamil','2025')"><img class="y-icon" src="./m-image/Y icon.png"/>2025 Tamil Movies</h1>
-        <h1 class="year" onclick="filterMovie('Tamil','2024')"><img class="y-icon" src="./m-image/Y icon.png"/>2024 Tamil Movies</h1>
-    </div>
-
-    <h1 class="heading">Hollywood Years [ Collaction ]</h1>
-
-    <div class="years">
-        <h1 class="year" onclick="filterMovie('Hollywood','2026')"><img class="y-icon" src="./m-image/Y icon.png"/>2026 Hollywood Movies</h1>
-        <h1 class="year" onclick="filterMovie('Hollywood','2025')"><img class="y-icon" src="./m-image/Y icon.png"/>2025 Hollywood Movies</h1>
-        <h1 class="year" onclick="filterMovie('Hollywood','2024')"><img class="y-icon" src="./m-image/Y icon.png"/>2024 Hollywood Movies</h1>
-
-    </div>
-
-
-
-</div>
-
-<!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'>
-</script><!-- End Cloudflare Web Analytics -->
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "d56e216847a549828166c56d48a99585"}'></script>
+    <!-- End Cloudflare Web Analytics -->
 
 </body>
-<script>
 
-function filterMovie(category,year){
-location.href =
-"list.html?category="+category+"&year="+year;
-}
-
-</script>
-<style>
-    .heading{
-        font-size: var(--text-sub);
-        color: var(--text);
-        padding:20px 20px 0px 30px;
-    }
-    .years{
-        width: 980px;
-    }
-    .year{
-        position: relative;
-        width: 940px;
-        margin: 10px 20px;
-        padding: 20px 0px 20px 20px;
-        padding-left: 75px;
-        font-size: var(--text-sub);
-        font-family:'Lexend', sans-serif;
-        text-align: left;
-        border: none;
-        border-radius: 10px;
-        color: var(--sub-text);
-        background-color: var(--card);
-    }
-    .y-icon{
-        left: 20px;
-        position: absolute;
-        width: 40px;
-    }
-</style>
 </html>
